@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스마트 가계부 내역 입력</title>
+    <?!= include('ui/sidebar.css'); ?>
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- 헤더 영역 -->
+      <div class="header">
+        <h1>
+          <span class="icon-svg">
+            <svg viewBox="0 0 24 24"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+          </span>
+          빠른 내역 입력
+        </h1>
+        <span id="currentMonthBadge" class="badge-month">2026-08</span>
+      </div>
+
+      <!-- 지출 / 수입 / 이체 탭 선택 -->
+      <div class="type-selector">
+        <button type="button" class="type-btn active" data-type="지출">
+          <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg></span>
+          지출
+        </button>
+        <button type="button" class="type-btn" data-type="수입">
+          <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M12 19V5"/><path d="m5 12 7-7 7 7"/></svg></span>
+          수입
+        </button>
+        <button type="button" class="type-btn" data-type="이체">
+          <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/></svg></span>
+          이체
+        </button>
+      </div>
+
+      <!-- 입력 폼 카드 -->
+      <form id="budgetForm" class="card">
+        <!-- 금액 입력 -->
+        <div class="form-group">
+          <label for="inputAmount">금액</label>
+          <div class="amount-input-wrap">
+            <input type="text" id="inputAmount" placeholder="0" required autocomplete="off">
+            <span class="amount-unit">원</span>
+          </div>
+          <!-- 빠른 금액 버튼 -->
+          <div class="quick-amounts">
+            <button type="button" class="btn-quick" data-add="10000">+1만</button>
+            <button type="button" class="btn-quick" data-add="50000">+5만</button>
+            <button type="button" class="btn-quick" data-add="100000">+10만</button>
+            <button type="button" class="btn-quick" data-add="0">초기화</button>
+          </div>
+        </div>
+
+        <!-- 일자 & 내용 -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="inputDate">거래 일자</label>
+            <input type="date" id="inputDate" required>
+          </div>
+          <div class="form-group">
+            <label for="inputDesc">내용 / 사용처</label>
+            <input type="text" id="inputDesc" placeholder="예: 스타벅스 아메리카노" required>
+          </div>
+        </div>
+
+        <!-- 카테고리 (대분류 / 소분류) -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="selectMainCat">대분류</label>
+            <select id="selectMainCat"></select>
+          </div>
+          <div class="form-group">
+            <label for="selectSubCat">소분류</label>
+            <select id="selectSubCat"></select>
+          </div>
+        </div>
+
+        <!-- 계좌 선택 (동적 제어) -->
+        <div class="form-row">
+          <div class="form-group" id="wrapFromAcc">
+            <label id="labelFromAcc" for="selectFromAcc">출금/결제 계좌</label>
+            <select id="selectFromAcc"></select>
+          </div>
+          <div class="form-group" id="wrapToAcc" style="display: none;">
+            <label for="selectToAcc">입금 계좌</label>
+            <select id="selectToAcc"></select>
+          </div>
+        </div>
+
+        <!-- 영수증 사진/파일 첨부 (구글 드라이브 자동 업로드) -->
+        <div class="form-group">
+          <label>영수증 첨부 (구글 드라이브 저장)</label>
+          <div class="upload-box" onclick="document.getElementById('inputReceipt').click()">
+            <span style="font-size: 12px; color: #64748B; display: inline-flex; align-items: center; gap: 6px;">
+              <span class="icon-svg"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span>
+              클릭하여 영수증 사진/PDF 첨부
+            </span>
+            <input type="file" id="inputReceipt" accept="image/*,application/pdf" style="display: none;">
+            <div id="receiptPreview" class="upload-preview" style="display: none;">
+              <span id="receiptFileName">선택된 파일</span>
+              <button type="button" onclick="event.stopPropagation(); removeReceipt();" style="border:none; background:transparent; color:#EF4444; cursor:pointer; font-weight:bold;">✕ 삭제</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 메모 -->
+        <div class="form-group">
+          <label for="inputMemo">메모 (선택사항)</label>
+          <input type="text" id="inputMemo" placeholder="추가 메모 입력">
+        </div>
+
+        <!-- 등록 버튼 -->
+        <button type="submit" id="btnSubmit" class="btn-submit">
+          <span class="icon-svg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8"/><path d="M8 12h8"/></svg></span>
+          <span id="btnSubmitText">거래내역 등록</span>
+        </button>
+      </form>
+
+      <!-- 최근 거래내역 피드 -->
+      <div class="recent-section">
+        <h2>
+          <span style="display:inline-flex; align-items:center; gap:6px;">
+            <span class="icon-svg"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
+            최근 등록 내역
+          </span>
+        </h2>
+        <div id="recentList" class="recent-list">
+          <div style="color:#94A3B8; font-size:11px; text-align:center; padding:10px;">데이터를 불러오는 중...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 토스트 알림창 -->
+    <div id="toast" class="toast"></div>
+
+    <?!= include('ui/sidebar.js'); ?>
+  </body>
+</html>

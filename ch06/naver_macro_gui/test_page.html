@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>매크로 클릭 테스트 페이지</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 40px;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 40px;
+        }
+        .target-btn {
+            background-color: #333;
+            color: white;
+            border: 2px solid #555;
+            padding: 30px 40px;
+            font-size: 24px;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            user-select: none;
+        }
+        .target-btn:active {
+            background-color: #4CAF50;
+            border-color: #4CAF50;
+            transform: scale(0.95);
+        }
+        .target-btn.clicked {
+            background-color: #4CAF50;
+            border-color: #4CAF50;
+        }
+        .log-container {
+            width: 100%;
+            max-width: 800px;
+            background-color: #2d2d2d;
+            border-radius: 8px;
+            padding: 20px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .log-container h3 {
+            margin-top: 0;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .clear-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        #log-area {
+            height: 250px;
+            overflow-y: auto;
+            font-family: 'Consolas', monospace;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            background-color: #383838;
+            border-radius: 4px;
+            animation: fadeIn 0.3s ease-in;
+        }
+        .log-time {
+            color: #8bc34a;
+            margin-right: 15px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>클릭 매크로 테스트 페이지</h1>
+
+    <div class="button-container">
+        <button class="target-btn" id="btn1" onclick="handleClick(1)">1번 타겟</button>
+        <button class="target-btn" id="btn2" onclick="handleClick(2)">2번 타겟</button>
+        <button class="target-btn" id="btn3" onclick="handleClick(3)">3번 타겟</button>
+    </div>
+
+    <div class="log-container">
+        <h3>
+            <span>클릭 모니터링 로그</span>
+            <button class="clear-btn" onclick="clearLogs()">로그 지우기</button>
+        </h3>
+        <div id="log-area">
+            <!-- 로그가 여기에 추가됩니다 -->
+        </div>
+    </div>
+
+    <script>
+        const logArea = document.getElementById('log-area');
+
+        function formatTime(date) {
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            const seconds = String(date.getSeconds()).padStart(2, '0');
+            const milliseconds = String(date.getMilliseconds()).padStart(3, '0');
+            return `${hours}:${minutes}:${seconds}.${milliseconds}`;
+        }
+
+        function handleClick(buttonNumber) {
+            const now = new Date();
+            const timeString = formatTime(now);
+            
+            // 시각적 효과 부여
+            const btn = document.getElementById(`btn${buttonNumber}`);
+            btn.classList.add('clicked');
+            setTimeout(() => btn.classList.remove('clicked'), 200);
+
+            // 로그 추가
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `<span class="log-time">[${timeString}]</span> ${buttonNumber}번 타겟 버튼이 클릭되었습니다!`;
+            
+            logArea.insertBefore(logEntry, logArea.firstChild);
+        }
+
+        function clearLogs() {
+            logArea.innerHTML = '';
+        }
+    </script>
+</body>
+</html>

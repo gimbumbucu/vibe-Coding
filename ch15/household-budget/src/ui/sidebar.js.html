@@ -1,0 +1,325 @@
+<script>
+  // 클라이언트 상태 관리
+  let state = {
+    currentType: '지출',
+    categories: [],
+    accounts: [],
+    receiptFile: null
+  };
+
+  // 초기화 함수
+  window.addEventListener('DOMContentLoaded', () => {
+    // 1. 기본 일자를 오늘 날짜로 세팅
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('inputDate').value = today;
+
+    // 2. 서버 데이터 로드
+    loadInitialData();
+
+    // 3. 이벤트 바인딩
+    setupEventListeners();
+  });
+
+  function setupEventListeners() {
+    // 구분 탭 전환 (지출/수입/이체)
+    document.querySelectorAll('.type-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const type = e.target.getAttribute('data-type');
+        setType(type);
+      });
+    });
+
+    // 대분류 변경 시 소분류 갱신
+    document.getElementById('selectMainCat').addEventListener('change', (e) => {
+      updateSubCategories(e.target.value);
+    });
+
+    // 금액 빠른 입력 버튼
+    document.querySelectorAll('.btn-quick').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const addVal = parseInt(e.target.getAttribute('data-add'), 10);
+        const amountInput = document.getElementById('inputAmount');
+        let current = parseInt(amountInput.value.replace(/,/g, ''), 10) || 0;
+        if (addVal === 0) {
+          amountInput.value = '';
+        } else {
+          current += addVal;
+          amountInput.value = current.toLocaleString();
+        }
+      });
+    });
+
+    // 금액 콤마 자동 포맷팅
+    document.getElementById('inputAmount').addEventListener('input', (e) => {
+      let val = e.target.value.replace(/[^0-9]/g, '');
+      if (val) {
+        e.target.value = parseInt(val, 10).toLocaleString();
+      } else {
+        e.target.value = '';
+      }
+    });
+
+    // 영수증 파일 첨부
+    const fileInput = document.getElementById('inputReceipt');
+    fileInput.addEventListener('change', handleFileSelect);
+
+    // 폼 제출
+    document.getElementById('budgetForm').addEventListener('submit', handleFormSubmit);
+  }
+
+  // 서버로부터 카테고리/계좌 목록 가져오기
+  function loadInitialData() {
+    google.script.run
+      .withSuccessHandler((res) => {
+        if (res.success && res.data) {
+          state.categories = res.data.categories;
+          state.accounts = res.data.accounts;
+          document.getElementById('currentMonthBadge').innerText = res.data.currentMonth;
+          
+          populateAccounts();
+          setType('지출');
+          renderRecentTransactions(res.data.recentTransactions);
+        }
+      })
+      .withFailureHandler((err) => {
+        showToast('초기 데이터를 불러오지 못했습니다: ' + err.message, 'error');
+      })
+      .apiGetFormData();
+  }
+
+  // 구분 변경 처리
+  function setType(type) {
+    state.currentType = type;
+
+    // 탭 스타일 갱신
+    document.querySelectorAll('.type-btn').forEach(btn => {
+      if (btn.getAttribute('data-type') === type) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // 계좌 필드 가시성 제어
+    const fromWrap = document.getElementById('wrapFromAcc');
+    const toWrap = document.getElementById('wrapToAcc');
+    const fromLabel = document.getElementById('labelFromAcc');
+
+    if (type === '지출') {
+      fromWrap.style.display = 'block';
+      toWrap.style.display = 'none';
+      fromLabel.innerText = '출금/결제 계좌';
+    } else if (type === '수입') {
+      fromWrap.style.display = 'none';
+      toWrap.style.display = 'block';
+    } else if (type === '이체') {
+      fromWrap.style.display = 'block';
+      toWrap.style.display = 'block';
+      fromLabel.innerText = '출금 계좌';
+    }
+
+    // 대분류 셀렉트 갱신
+    populateMainCategories(type);
+  }
+
+  // 대분류 셀렉트 채우기
+  function populateMainCategories(type) {
+    const mainSelect = document.getElementById('selectMainCat');
+    mainSelect.innerHTML = '';
+
+    const filtered = state.categories.filter(c => c.type === type);
+    filtered.forEach((c, idx) => {
+      const opt = document.createElement('option');
+      opt.value = c.mainCategory;
+      opt.innerText = c.mainCategory;
+      if (idx === 0) opt.selected = true;
+      mainSelect.appendChild(opt);
+    });
+
+    if (filtered.length > 0) {
+      updateSubCategories(filtered[0].mainCategory);
+    } else {
+      updateSubCategories('');
+    }
+  }
+
+  // 소분류 셀렉트 채우기
+  function updateSubCategories(mainCategory) {
+    const subSelect = document.getElementById('selectSubCat');
+    subSelect.innerHTML = '';
+
+    const matched = state.categories.find(c => c.mainCategory === mainCategory && c.type === state.currentType);
+    if (matched && matched.subCategories.length > 0) {
+      matched.subCategories.forEach(sub => {
+        const opt = document.createElement('option');
+        opt.value = sub;
+        opt.innerText = sub;
+        subSelect.appendChild(opt);
+      });
+    } else {
+      const opt = document.createElement('option');
+      opt.value = '일반';
+      opt.innerText = '일반';
+      subSelect.appendChild(opt);
+    }
+  }
+
+  // 계좌 셀렉트 채우기
+  function populateAccounts() {
+    const fromSelect = document.getElementById('selectFromAcc');
+    const toSelect = document.getElementById('selectToAcc');
+    fromSelect.innerHTML = '';
+    toSelect.innerHTML = '';
+
+    state.accounts.forEach(acc => {
+      const opt1 = document.createElement('option');
+      opt1.value = acc;
+      opt1.innerText = acc;
+      fromSelect.appendChild(opt1);
+
+      const opt2 = document.createElement('option');
+      opt2.value = acc;
+      opt2.innerText = acc;
+      toSelect.appendChild(opt2);
+    });
+  }
+
+  // 영수증 파일 선택 시 Base64 인코딩
+  function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (!file) {
+      state.receiptFile = null;
+      document.getElementById('receiptPreview').style.display = 'none';
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      showToast('파일 크기는 10MB 이하만 가능합니다.', 'error');
+      e.target.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(evt) {
+      state.receiptFile = {
+        base64Data: evt.target.result,
+        fileName: file.name,
+        mimeType: file.type
+      };
+      const preview = document.getElementById('receiptPreview');
+      preview.style.display = 'flex';
+      document.getElementById('receiptFileName').innerText = file.name;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeReceipt() {
+    state.receiptFile = null;
+    document.getElementById('inputReceipt').value = '';
+    document.getElementById('receiptPreview').style.display = 'none';
+  }
+
+  // 폼 등록 제출
+  function handleFormSubmit(e) {
+    e.preventDefault();
+
+    const amountStr = document.getElementById('inputAmount').value.replace(/,/g, '');
+    const amount = parseInt(amountStr, 10);
+    if (!amount || amount <= 0) {
+      showToast('올바른 금액을 입력해주세요.', 'error');
+      return;
+    }
+
+    const description = document.getElementById('inputDesc').value.trim();
+    if (!description) {
+      showToast('내용/사용처를 입력해주세요.', 'error');
+      return;
+    }
+
+    const btn = document.getElementById('btnSubmit');
+    const btnText = document.getElementById('btnSubmitText');
+    btn.disabled = true;
+    if (btnText) btnText.innerText = '등록 중...';
+
+    const inputData = {
+      date: document.getElementById('inputDate').value,
+      type: state.currentType,
+      categoryMain: document.getElementById('selectMainCat').value,
+      categorySub: document.getElementById('selectSubCat').value,
+      amount: amount,
+      fromAccount: state.currentType !== '수입' ? document.getElementById('selectFromAcc').value : '',
+      toAccount: state.currentType !== '지출' ? document.getElementById('selectToAcc').value : '',
+      description: description,
+      memo: document.getElementById('inputMemo').value.trim(),
+      receiptFile: state.receiptFile
+    };
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        btn.disabled = false;
+        if (btnText) btnText.innerText = '거래내역 등록';
+
+        if (res.success) {
+          showToast(res.message, 'success');
+          // 폼 초기화
+          document.getElementById('inputAmount').value = '';
+          document.getElementById('inputDesc').value = '';
+          document.getElementById('inputMemo').value = '';
+          removeReceipt();
+
+          // 최근 거래 목록 갱신을 위해 데이터 재로드
+          loadInitialData();
+        } else {
+          showToast('등록 실패: ' + res.error, 'error');
+        }
+      })
+      .withFailureHandler((err) => {
+        btn.disabled = false;
+        if (btnText) btnText.innerText = '거래내역 등록';
+        showToast('서버 오류: ' + err.message, 'error');
+      })
+      .apiRecordTransaction(inputData);
+  }
+
+  // 최근 거래내역 목록 렌더링
+  function renderRecentTransactions(list) {
+    const container = document.getElementById('recentList');
+    container.innerHTML = '';
+
+    if (!list || list.length === 0) {
+      container.innerHTML = '<div style="color:#94A3B8; font-size:11px; text-align:center; padding:10px;">최근 거래내역이 없습니다.</div>';
+      return;
+    }
+
+    list.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'recent-item';
+
+      const typeClass = item.type === '지출' ? 'expense' : (item.type === '수입' ? 'income' : 'transfer');
+      const sign = item.type === '지출' ? '-' : (item.type === '수입' ? '+' : '');
+
+      div.innerHTML = `
+        <div class="recent-left">
+          <span class="recent-desc">${item.description}</span>
+          <span class="recent-cat">${item.date} · ${item.category}</span>
+        </div>
+        <div class="recent-amount ${typeClass}">
+          ${sign}₩${item.amount.toLocaleString()}
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  }
+
+  // 토스트 메시지
+  function showToast(msg, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.innerText = msg;
+    toast.className = `toast ${type}`;
+    toast.style.display = 'block';
+
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 4000);
+  }
+</script>

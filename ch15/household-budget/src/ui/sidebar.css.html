@@ -1,0 +1,361 @@
+<style>
+  :root {
+    --primary: #2563EB;
+    --primary-hover: #1D4ED8;
+    --primary-light: #EFF6FF;
+    --expense: #EF4444;
+    --income: #10B981;
+    --transfer: #6366F1;
+    --bg: #F8FAFC;
+    --card: #FFFFFF;
+    --text: #0F172A;
+    --text-muted: #64748B;
+    --border: #E2E8F0;
+    --ring: rgba(37, 99, 235, 0.2);
+    --radius: 10px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text);
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .app-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Icon Base */
+  .icon-svg {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    flex-shrink: 0;
+  }
+
+  .icon-svg svg {
+    width: 15px;
+    height: 15px;
+    stroke-width: 2.2;
+    stroke: currentColor;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .header h1 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .header h1 .icon-svg svg {
+    width: 19px;
+    height: 19px;
+    color: var(--primary);
+  }
+
+  .badge-month {
+    background: var(--primary-light);
+    color: var(--primary);
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  /* Segmented Type Selector */
+  .type-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    background: #E2E8F0;
+    padding: 3px;
+    border-radius: var(--radius);
+    gap: 2px;
+  }
+
+  .type-btn {
+    border: none;
+    background: transparent;
+    padding: 8px 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .type-btn.active[data-type="지출"] {
+    background: var(--expense);
+    color: #FFF;
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+  }
+
+  .type-btn.active[data-type="수입"] {
+    background: var(--income);
+    color: #FFF;
+    box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+  }
+
+  .type-btn.active[data-type="이체"] {
+    background: var(--transfer);
+    color: #FFF;
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
+  }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 14px;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 9px 11px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--text);
+    background: #FFF;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px var(--ring);
+  }
+
+  .amount-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .amount-input-wrap input {
+    font-size: 17px;
+    font-weight: 700;
+    text-align: right;
+    padding-right: 28px;
+  }
+
+  .amount-unit {
+    position: absolute;
+    right: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+  }
+
+  /* Quick Amount Buttons */
+  .quick-amounts {
+    display: flex;
+    gap: 4px;
+    margin-top: 4px;
+  }
+
+  .btn-quick {
+    flex: 1;
+    background: #F1F5F9;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 0;
+    font-size: 11px;
+    font-weight: 500;
+    color: #475569;
+    cursor: pointer;
+  }
+
+  .btn-quick:hover {
+    background: #E2E8F0;
+  }
+
+  /* Receipt Upload Box */
+  .upload-box {
+    border: 1.5px dashed var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+    background: #FAFAFA;
+    transition: all 0.2s;
+  }
+
+  .upload-box:hover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+  }
+
+  .upload-preview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--primary);
+    font-weight: 500;
+    margin-top: 4px;
+  }
+
+  /* Submit Button */
+  .btn-submit {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    transition: background 0.2s, transform 0.1s;
+  }
+
+  .btn-submit:hover {
+    background: var(--primary-hover);
+  }
+
+  .btn-submit:active {
+    transform: scale(0.98);
+  }
+
+  .btn-submit:disabled {
+    background: #CBD5E1;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  /* Recent Transactions Section */
+  .recent-section h2 {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .recent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .recent-item {
+    background: #FFF;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .recent-left {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .recent-desc {
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--text);
+  }
+
+  .recent-cat {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .recent-amount {
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .recent-amount.expense { color: var(--expense); }
+  .recent-amount.income { color: var(--income); }
+  .recent-amount.transfer { color: var(--transfer); }
+
+  /* Toast Notification */
+  .toast {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    right: 16px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    display: none;
+    animation: fadeIn 0.3s ease;
+    z-index: 1000;
+  }
+
+  .toast.success { background: #065F46; color: white; }
+  .toast.error { background: #991B1B; color: white; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>

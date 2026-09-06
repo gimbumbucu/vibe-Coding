@@ -1,0 +1,4 @@
+# Requirements for yfinance stock skill
+yfinance>=1.6.0
+pandas>=1.3.0
+deep-translator>=1.11.0

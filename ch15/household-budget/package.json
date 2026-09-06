@@ -1,0 +1,30 @@
+{
+  "name": "google-sheets-household-budget",
+  "version": "1.0.0",
+  "description": "Google Apps Script + Clasp + Google Sheets & Drive Automated Household Budget System",
+  "main": "src/main.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "push": "clasp push",
+    "watch": "clasp push --watch",
+    "open": "clasp open",
+    "logs": "clasp logs"
+  },
+  "keywords": [
+    "google-apps-script",
+    "clasp",
+    "typescript",
+    "google-sheets",
+    "google-drive",
+    "budget",
+    "household-budget"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@google/clasp": "^2.4.2",
+    "@types/google-apps-script": "^1.0.83",
+    "typescript": "^5.4.5"
+  }
+}

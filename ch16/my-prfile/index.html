@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Primary SEO Meta Tags -->
+  <title>풀스택 & AI 엔지니어 포트폴리오 | DEV.HYEON</title>
+  <meta name="title" content="풀스택 & AI 엔지니어 포트폴리오 | DEV.HYEON" />
+  <meta name="description" content="240만 건 대용량 공간 빅데이터 최적화부터 Google Gemini 2.0 실시간 AI 어시스턴트, Rust Tauri v2 데스크톱 앱, FSD/TDD 풀스택 웹 애플리케이션까지. 문제를 끝까지 해결하는 엔지니어의 포트폴리오입니다." />
+  <meta name="keywords" content="풀스택 개발자, AI 엔지니어, React 19, Next.js 15, FastAPI, Gemini 2.0, Parquet, DuckDB, Tauri v2, TDD, 포트폴리오" />
+  <meta name="author" content="DEV.HYEON" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="풀스택 & AI 엔지니어 포트폴리오 | DEV.HYEON" />
+  <meta property="og:description" content="240만 건 대용량 공간 빅데이터 최적화부터 실시간 생성형 AI 어시스턴트까지, 문제를 끝까지 파고드는 풀스택 엔지니어 포트폴리오" />
+  <meta property="og:image" content="assets/images/og-preview.png" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="풀스택 & AI 엔지니어 포트폴리오 | DEV.HYEON" />
+  <meta name="twitter:description" content="240만 건 대용량 공간 빅데이터 최적화부터 실시간 생성형 AI 어시스턴트까지, 문제를 끝까지 파고드는 풀스택 엔지니어 포트폴리오" />
+  <meta name="twitter:image" content="assets/images/og-preview.png" />
+
+  <!-- JSON-LD Structured Data for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "DEV.HYEON",
+    "jobTitle": "Fullstack & AI Engineer",
+    "description": "240만 건 공간 빅데이터 최적화, Gemini 2.0 실시간 스트리밍 AI, Tauri v2 데스크톱 및 TDD 풀스택 소프트웨어 엔지니어",
+    "url": "https://developer-hyeon.github.io",
+    "sameAs": [
+      "https://github.com",
+      "https://velog.io",
+      "https://linkedin.com"
+    ],
+    "knowsAbout": [
+      "React 19", "Next.js 15", "FastAPI", "Python", "Google Gemini 2.0",
+      "Apache Parquet", "DuckDB", "Rust Tauri v2", "TDD", "Supabase"
+    ]
+  }
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%232c98f0%22/><text x=%2250%22 y=%2268%22 font-size=%2255%22 font-family=%22serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 fill=%22%23ffffff%22>H</text></svg>" />
+
+  <!-- Web Fonts: MaruBuri & Google Fonts with font-display: swap -->
+  <link rel="preconnect" href="https://hangeul.pstatic.net" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Quicksand:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/components.css" />
+  <link rel="stylesheet" href="assets/css/animations.css" />
+</head>
+<body>
+
+  <!-- Mobile Hamburger Nav Toggle Button -->
+  <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="메뉴 열기/닫기" aria-expanded="false" aria-controls="sidebar">
+    <span class="bar bar-1"></span>
+    <span class="bar bar-2"></span>
+    <span class="bar bar-3"></span>
+  </button>
+
+  <!-- ==========================================================================
+       Jackson 2-Column Split Layout Wrapper
+       ========================================================================== -->
+  <div id="page-wrapper" class="page-wrapper">
+
+    <!-- ========================================================================
+         [1] Fixed Left Sidebar (Jackson Style)
+         ======================================================================== -->
+    <aside id="sidebar" class="sidebar" role="complementary" aria-label="사이드바 내비게이션">
+      
+      <!-- Profile Header -->
+      <div class="sidebar-header text-center">
+        <div class="author-avatar-box">
+          <div class="author-avatar" style="background-image: url('assets/images/profile.png');" role="img" aria-label="DEV.HYEON 프로필 사진"></div>
+          <span class="status-indicator-dot" title="Available for Hire"></span>
+        </div>
+        <h1 class="author-name"><a href="#home">DEV.HYEON</a></h1>
+        <div class="author-title">
+          <span>풀스택 & AI 엔지니어</span> <br />
+          <span class="author-location">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:-1px; margin-right:2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            in Seoul, Korea
+          </span>
+        </div>
+      </div>
+
+      <!-- Navigation Menu (Jackson Structure) -->
+      <nav id="sidebar-nav" class="sidebar-nav" role="navigation" aria-label="주요 내비게이션">
+        <ul class="sidebar-menu" id="sidebar-menu">
+          <li class="active"><a href="#home" class="nav-link">Home</a></li>
+          <li><a href="#about" class="nav-link">About</a></li>
+          <li><a href="#philosophy" class="nav-link">Philosophy</a></li>
+          <li><a href="#skills" class="nav-link">Skills</a></li>
+          <li><a href="#projects" class="nav-link">Work</a></li>
+          <li><a href="#timeline" class="nav-link">Experience</a></li>
+          <li><a href="#insights" class="nav-link">Blog</a></li>
+          <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- Sidebar Footer (Social Links & Theme Toggle) -->
+      <div class="sidebar-footer">
+        <div class="sidebar-social-links">
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-icon" title="GitHub" aria-label="GitHub 프로필">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          </a>
+          <a href="https://velog.io" target="_blank" rel="noopener noreferrer" class="social-icon" title="Tech Blog" aria-label="기술 블로그">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon" title="LinkedIn" aria-label="LinkedIn 프로필">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+          </a>
+          <a href="#contact" class="social-icon" title="Email" aria-label="이메일 문의">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </a>
+        </div>
+
+        <div class="sidebar-theme-switch">
+          <button class="theme-toggle-btn" id="theme-toggle" aria-label="다크/라이트 테마 전환">
+            <svg class="theme-toggle-icon sun-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            <svg class="theme-toggle-icon moon-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <span class="theme-toggle-text">Theme</span>
+          </button>
+        </div>
+
+        <div class="sidebar-copyright">
+          <small>&copy; 2026 <strong>DEV.HYEON</strong>. <br />Crafted with Jackson Design System.</small>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ========================================================================
+         [2] Main Scrollable Content Area (Right Side)
+         ======================================================================== -->
+    <main id="main-content" class="main-content">
+
+      <!-- ======================================================================
+           1. Hero Section (Classic Jackson Intro Canvas)
+           ====================================================================== -->
+      <section class="hero-section" id="home">
+        <div class="section-container">
+          <div class="hero-grid">
+            
+            <!-- Left Editorial Text -->
+            <div class="hero-content">
+              <span class="hero-meta">INTRODUCTION</span>
+              <h1 class="hero-title">
+                Hi!<br />
+                I'm DEV.HYEON
+              </h1>
+              <span class="hero-subtitle">풀스택 웹 애플리케이션 & AI 빅데이터 엔지니어</span>
+
+              <p class="hero-description">
+                컴퓨터 사이언스 기본기와 깊이 있는 몰입을 바탕으로 대용량 공간 빅데이터 최적화(240만 건)부터 
+                Google Gemini 2.0 실시간 AI 어시스턴트, Rust Tauri v2 데스크톱 네이티브까지 사용자에게 실질적인 가치를 전달하는 견고한 소프트웨어를 구축합니다.
+              </p>
+
+              <div class="hero-buttons">
+                <a href="#projects" class="btn btn-primary">VIEW PORTFOLIO</a>
+                <a href="#contact" class="btn btn-outline">CONTACT ME</a>
+              </div>
+            </div>
+
+            <!-- Right Visual (Clean Editorial Portrait) -->
+            <div class="hero-visual">
+              <div class="avatar-wrapper">
+                <div class="avatar-image-box">
+                  <img src="assets/images/profile.png" alt="개발자 프로필 사진" loading="eager" />
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Jackson Milestone Stats Ticker -->
+          <div class="stats-banner reveal">
+            <div class="stats-grid">
+              
+              <div class="stat-item color-1">
+                <div class="stat-number-wrapper">
+                  <span class="stat-number" data-target="14">0</span>
+                  <span class="stat-suffix">+</span>
+                </div>
+                <div class="stat-label">Projects Done</div>
+              </div>
+
+              <div class="stat-item color-2">
+                <div class="stat-number-wrapper">
+                  <span class="stat-number" data-target="2.4" data-decimal="true">0</span>
+                  <span class="stat-suffix">M+</span>
+                </div>
+                <div class="stat-label">Data Indexed</div>
+              </div>
+
+              <div class="stat-item color-3">
+                <div class="stat-number-wrapper">
+                  <span class="stat-prefix">&lt;</span>
+                  <span class="stat-number" data-target="100">0</span>
+                  <span class="stat-suffix">ms</span>
+                </div>
+                <div class="stat-label">Query Latency</div>
+              </div>
+
+              <div class="stat-item color-4">
+                <div class="stat-number-wrapper">
+                  <span class="stat-number" data-target="100">0</span>
+                  <span class="stat-suffix">%</span>
+                </div>
+                <div class="stat-label">Test Reliability</div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           2. About Us Section (Exact [그림2] Benchmark: WHO AM I?)
+           ====================================================================== -->
+      <section id="about" class="section">
+        <div class="section-container">
+          
+          <div class="section-header reveal">
+            <span class="heading-meta">ABOUT US</span>
+            <h2 class="section-title">WHO AM I?</h2>
+          </div>
+
+          <div class="about-intro-text reveal">
+            <p class="about-lead">
+              <strong>Hi I'm DEV.HYEON</strong> 문제를 해결하고 지속 가능한 가치를 만드는 풀스택 & AI 엔지니어입니다. 컴퓨터 사이언스 기본기와 깊이 있는 몰입을 바탕으로 대용량 공간 빅데이터 최적화(240만 건)부터 Google Gemini 2.0 실시간 AI 어시스턴트, Rust Tauri v2 데스크톱 네이티브까지 사용자에게 실질적인 가치를 전달하는 견고한 소프트웨어를 구축합니다.
+            </p>
+            <p class="about-lead">
+              단순한 기능 구현에 만족하지 않고 근본 원인(Root Cause)을 끝까지 분석하여 해결하며, 지식의 나눔과 협력적 소통을 통해 동료 및 사용자와 함께 성장하는 엔지니어링 문화를 지향합니다.
+            </p>
+          </div>
+
+          <!-- 4-Column Jackson Signature Service Boxes ([그림2] Cards) -->
+          <div class="jackson-cards-grid">
+            
+            <!-- 1. Graphic / Architecture (Blue) -->
+            <div class="jackson-card color-1 reveal">
+              <div class="jackson-card-icon">
+                <svg viewBox="0 0 24 24">
+                  <path d="M9 21h6M10 24h4M12 3a6 6 0 0 0-6 6c0 2.22 1.21 4.16 3 5.2V17a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-2.8c1.79-1.04 3-2.98 3-5.2a6 6 0 0 0-6-6z"/>
+                </svg>
+              </div>
+              <h3 class="jackson-card-title">Graphic & Architecture</h3>
+            </div>
+
+            <!-- 2. Web Design / Development (Red) -->
+            <div class="jackson-card color-2 reveal reveal-delay-1">
+              <div class="jackson-card-icon">
+                <svg viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                </svg>
+              </div>
+              <h3 class="jackson-card-title">Web Development</h3>
+            </div>
+
+            <!-- 3. Software / Big Data (Yellow) -->
+            <div class="jackson-card color-3 reveal reveal-delay-2">
+              <div class="jackson-card-icon">
+                <svg viewBox="0 0 24 24">
+                  <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                </svg>
+              </div>
+              <h3 class="jackson-card-title">Software & Big Data</h3>
+            </div>
+
+            <!-- 4. Application / AI (Purple) -->
+            <div class="jackson-card color-4 reveal reveal-delay-3">
+              <div class="jackson-card-icon">
+                <svg viewBox="0 0 24 24">
+                  <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
+                  <line x1="12" y1="18" x2="12.01" y2="18"/>
+                </svg>
+              </div>
+              <h3 class="jackson-card-title">Application & AI</h3>
+            </div>
+
+          </div>
+
+          <!-- Iconic Amber Milestone Callout Banner ([그림2] Bottom Yellow Banner) -->
+          <div class="jackson-hire-banner reveal">
+            <h3 class="banner-heading">
+              I am happy to know you<br />
+              that 14+ projects done successfully!
+            </h3>
+            <a href="#contact" class="btn-hire-outline">HIRE ME</a>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           3. Engineering Philosophy Section (5 Core Principles)
+           ====================================================================== -->
+      <section id="philosophy" class="section">
+        <div class="section-container">
+          
+          <div class="section-header reveal">
+            <span class="heading-meta">CORE PRINCIPLES</span>
+            <h2 class="section-title">ENGINEERING PHILOSOPHY</h2>
+            <p class="section-subtitle">
+              단순한 기능 구현을 넘어 원리와 기본에 충실하고, 몰입과 공유를 통해 팀과 사용자가 함께 성장하는 엔지니어링을 지향합니다.
+            </p>
+          </div>
+
+          <!-- Core Quote Banner -->
+          <div class="philosophy-banner reveal">
+            <p class="philosophy-quote">
+              "근본에 충실하며, 몰입을 통해 문제를 해결하고, 지식의 나눔과 협력으로 사용자와 팀 모두에게 지속 가능한 가치를 전달합니다."
+            </p>
+          </div>
+
+          <!-- 5 Core Values Grid -->
+          <div class="philosophy-grid">
+            
+            <!-- 1. Deep Dive -->
+            <div class="philosophy-card color-2 reveal reveal-delay-1">
+              <div class="philosophy-icon-box icon-box-rose">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+                </svg>
+              </div>
+              <h3 class="philosophy-card-title">1. 지적 하드 워킹 (Deep Dive)</h3>
+              <div class="philosophy-card-quote">"해결해야 할 문제가 있다면 끝까지 파고드는 깊은 몰입"</div>
+              <p class="philosophy-card-desc">
+                단기적인 땜질식 처방에 만족하지 않고 근본 원인(Root Cause)을 끝까지 분석하여 완벽하게 해결합니다.
+              </p>
+              <ul class="philosophy-bullets">
+                <li>될 때까지 파고드는 끈기와 집념</li>
+                <li>장애 상황에서의 원인 규명 및 최적화</li>
+              </ul>
+            </div>
+
+            <!-- 2. Solid Fundamentals -->
+            <div class="philosophy-card color-4 reveal reveal-delay-2">
+              <div class="philosophy-icon-box icon-box-purple">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 21h18M3 10h18M5 10v11M19 10v11M9 10v11M15 10v11M12 3l9 7H3z"/>
+                </svg>
+              </div>
+              <h3 class="philosophy-card-title">2. 기본기 중시 (Solid Fundamentals)</h3>
+              <div class="philosophy-card-quote">"CS 지식과 프로그래밍 기본기에 기반한 근본적 해결"</div>
+              <p class="philosophy-card-desc">
+                프레임워크의 외형에만 의존하지 않고, 컴퓨터 사이언스 기초와 런타임의 내부 동작 원리를 깊이 이해합니다.
+              </p>
+              <ul class="philosophy-bullets">
+                <li>트렌드에 흔들리지 않는 튼튼한 체력</li>
+                <li>확장 가능하고 유지보수성 높은 클린 코드</li>
+              </ul>
+            </div>
+
+            <!-- 3. Protégé Effect -->
+            <div class="philosophy-card color-1 reveal reveal-delay-3">
+              <div class="philosophy-icon-box icon-box-cyan">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="23 4 23 10 17 10"/>
+                  <polyline points="1 20 1 14 7 14"/>
+                  <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                </svg>
+              </div>
+              <h3 class="philosophy-card-title">3. 프로테제 효과 (Protégé Effect)</h3>
+              <div class="philosophy-card-quote">"나눔과 교육을 통해 스스로도 깊이 배우는 선순환"</div>
+              <p class="philosophy-card-desc">
+                타인에게 설명하고 지식을 전달하는 과정에서 메타인지를 발휘하여 앎의 빈틈을 메우고 전문성을 공고히 합니다.
+              </p>
+              <ul class="philosophy-bullets">
+                <li>실무와 강의/멘토링의 상호 시너지</li>
+                <li>체계적인 기술 문서화 및 지식 자산 축적</li>
+              </ul>
+            </div>
+
+            <!-- 4. Social Constructivism -->
+            <div class="philosophy-card color-3 reveal reveal-delay-4">
+              <div class="philosophy-icon-box icon-box-amber">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              </div>
+              <h3 class="philosophy-card-title">4. 사회적 구성주의 (Constructivism)</h3>
+              <div class="philosophy-card-quote">"협력적 학습과 팀의 상호작용을 통한 집단 성장"</div>
+              <p class="philosophy-card-desc">
+                개인의 독자적 역량보다 팀원들과의 활발한 소통, 코드 리뷰, 페어 프로그래밍을 통한 시너지를 믿습니다.
+              </p>
+              <ul class="philosophy-bullets">
+                <li>심리적 안정감 기반의 열린 커뮤니케이션</li>
+                <li>팀원의 문제를 함께 고민하는 동반 성장</li>
+              </ul>
+            </div>
+
+            <!-- 5. User-Centric -->
+            <div class="philosophy-card color-5 reveal reveal-delay-5">
+              <div class="philosophy-icon-box icon-box-green">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <circle cx="12" cy="12" r="6"/>
+                  <circle cx="12" cy="12" r="2"/>
+                </svg>
+              </div>
+              <h3 class="philosophy-card-title">5. 사용자 중심 (User-Centric)</h3>
+              <div class="philosophy-card-quote">"기술에 매몰되지 않고 사용자 경험과 실질적 가치 창출"</div>
+              <p class="philosophy-card-desc">
+                기술은 수단이며, 진정한 목적은 사용자에게 최상의 경험과 비즈니스 임팩트를 전달하는 것임을 잊지 않습니다.
+              </p>
+              <ul class="philosophy-bullets">
+                <li>사용자 관점의 레이턴시 및 UX 디테일 최적화</li>
+                <li>비즈니스 목표와 기술적 완성도의 조화</li>
+              </ul>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           4. Skills & Tech Stack Matrix (Jackson Progress Bars)
+           ====================================================================== -->
+      <section id="skills" class="section">
+        <div class="section-container">
+          
+          <div class="section-header reveal">
+            <span class="heading-meta">MY SPECIALTY</span>
+            <h2 class="section-title">MY SKILLS</h2>
+            <p class="section-subtitle">
+              각 프로젝트에서 실제로 적용하고 성능을 검증한 핵심 기술과 역량입니다.
+            </p>
+          </div>
+
+          <!-- Skills Category Tabs -->
+          <div class="skills-tab-filter reveal">
+            <button class="tab-btn skills-tab-btn active" data-category="all">전체 (All)</button>
+            <button class="tab-btn skills-tab-btn" data-category="frontend">프론트엔드</button>
+            <button class="tab-btn skills-tab-btn" data-category="backend">백엔드 & AI</button>
+            <button class="tab-btn skills-tab-btn" data-category="data_cloud">데이터 & 클라우드</button>
+            <button class="tab-btn skills-tab-btn" data-category="desktop_agent">데스크톱 & 에이전트</button>
+          </div>
+
+          <!-- Dynamic Skills Grid -->
+          <div class="skills-grid" id="skills-container"></div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           5. Featured Projects Showcase (Jackson Work Benchmark)
+           ====================================================================== -->
+      <section id="projects" class="section">
+        <div class="section-container">
+          
+          <div class="section-header reveal">
+            <span class="heading-meta">MY WORK</span>
+            <h2 class="section-title">RECENT WORK</h2>
+            <p class="section-subtitle">
+              카드를 클릭하여 상세 아키텍처와 트러블슈팅(Troubleshooting) 해결 과정을 확인하세요.
+            </p>
+          </div>
+
+          <!-- Projects Category Filter -->
+          <div class="projects-filter reveal">
+            <button class="filter-btn project-filter-btn active" data-filter="all">전체 (All)</button>
+            <button class="filter-btn project-filter-btn" data-filter="featured">대표 프로젝트</button>
+            <button class="filter-btn project-filter-btn" data-filter="ai">AI & 빅데이터</button>
+            <button class="filter-btn project-filter-btn" data-filter="fullstack">풀스택 & TDD</button>
+            <button class="filter-btn project-filter-btn" data-filter="web">웹 & 커머스</button>
+            <button class="filter-btn project-filter-btn" data-filter="automation">자동화 & 데스크톱</button>
+          </div>
+
+          <!-- Dynamic Projects Grid -->
+          <div class="projects-grid" id="projects-container"></div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           6. Career & Roadmap Timeline (Jackson Experience Benchmark)
+           ====================================================================== -->
+      <section id="timeline" class="section">
+        <div class="section-container">
+          
+          <div class="section-header reveal">
+            <span class="heading-meta">EXPERIENCE</span>
+            <h2 class="section-title">WORK EXPERIENCE</h2>
+            <p class="section-subtitle">
+              웹 인터랙션 기초부터 대용량 분산 데이터 처리와 멀티 에이전트 시스템까지의 성장 여정입니다.
+            </p>
+          </div>
+
+          <!-- Timeline Container -->
+          <div class="timeline-wrapper" id="timeline-container"></div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           7. Tech Insights & Articles (Jackson Blog Benchmark)
+           ====================================================================== -->
+      <section id="insights" class="section">
+        <div class="section-container">
+          
+          <div class="section-header reveal">
+            <span class="heading-meta">READ</span>
+            <h2 class="section-title">RECENT BLOG</h2>
+            <p class="section-subtitle">
+              실제 프로덕션을 구축하고 문제를 해결하는 과정에서 얻은 기술적 교훈과 아키텍처 결정을 기록한 글입니다.
+            </p>
+          </div>
+
+          <!-- Dynamic Insights Grid -->
+          <div class="insights-grid" id="insights-container"></div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           8. Contact Me Section (Jackson Contact Benchmark)
+           ====================================================================== -->
+      <section id="contact" class="section">
+        <div class="section-container">
+          
+          <div class="section-header reveal">
+            <span class="heading-meta">GET IN TOUCH</span>
+            <h2 class="section-title">CONTACT</h2>
+            <p class="section-subtitle">
+              기술적인 논의, 프로젝트 협업, 채용 문의 등 언제든지 편하게 연락주세요.
+            </p>
+          </div>
+
+          <div class="contact-grid">
+            
+            <!-- Left Contact Info Panel -->
+            <div class="contact-info-panel reveal">
+              
+              <div class="contact-card color-1">
+                <div class="contact-card-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                </div>
+                <div>
+                  <div class="contact-card-label">CURRENT STATUS</div>
+                  <div class="contact-card-val" style="color: var(--color-1);">채용 및 프로젝트 협업 가능 (Available for Hire)</div>
+                </div>
+              </div>
+
+              <div class="contact-card color-2">
+                <div class="contact-card-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div>
+                  <div class="contact-card-label">LOCATION</div>
+                  <div class="contact-card-val">대한민국 서울 (Seoul, South Korea) / Remote</div>
+                </div>
+              </div>
+
+              <!-- Email Copy Box -->
+              <div class="email-copy-box color-3">
+                <div>
+                  <div class="contact-card-label" style="margin-bottom: 2px;">EMAIL ADDRESS</div>
+                  <div class="email-address-text" id="email-address-text">developer.hyeon@example.com</div>
+                </div>
+                <button class="copy-btn" id="copy-email-btn" aria-label="이메일 주소 복사">복사</button>
+              </div>
+
+              <div class="contact-card color-4">
+                <div class="contact-card-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                </div>
+                <div>
+                  <div class="contact-card-label">SPECIALIZED DOMAINS</div>
+                  <div class="contact-card-val" style="font-size: 0.95rem;">Fullstack Web, AI Agent, Big Data GIS, Desktop Native</div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Right Quick Message Form -->
+            <div class="contact-form-card reveal">
+              <form id="contact-form">
+                
+                <div class="form-group">
+                  <label for="sender-name" class="form-label">보내시는 분 성함 / 회사명 *</label>
+                  <input type="text" id="sender-name" class="form-input" placeholder="홍길동 (또는 기업명)" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="sender-email" class="form-label">회신 받으실 이메일 *</label>
+                  <input type="email" id="sender-email" class="form-input" placeholder="example@domain.com" required />
+                </div>
+
+                <div class="form-group">
+                  <label for="sender-subject" class="form-label">문의 제목</label>
+                  <input type="text" id="sender-subject" class="form-input" placeholder="프로젝트 협업 또는 포지션 제안 문의" />
+                </div>
+
+                <div class="form-group">
+                  <label for="sender-message" class="form-label">메시지 내용 *</label>
+                  <textarea id="sender-message" class="form-textarea" placeholder="문의하실 내용을 자유롭게 작성해 주세요." required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                  <span>메시지 보내기</span>
+                </button>
+
+              </form>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================================
+           Footer Inside Main
+           ====================================================================== -->
+      <footer class="footer">
+        <div class="footer-content">
+          <div class="footer-text">
+            &copy; 2026 <strong>DEV.HYEON</strong>. All Rights Reserved. Built with Modern Web & AI Architecture.
+          </div>
+          <div class="footer-badge">
+            Powered by Jackson Design System
+          </div>
+        </div>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <!-- ==========================================================================
+       Project Detail Popup Modal
+       ========================================================================== -->
+  <div class="modal-backdrop" id="project-modal" aria-hidden="true">
+    <div class="modal-container" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close-btn" id="modal-close-btn" aria-label="모달 닫기">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div class="modal-content" id="modal-body-content">
+        <!-- Content will be injected dynamically by projects.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       Scroll to Top Floating Action
+       ========================================================================== -->
+  <button class="scroll-top-btn" id="scroll-top-btn" aria-label="맨 위로 스크롤">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+
+  <!-- Scripts -->
+  <script type="module" src="assets/js/main.js"></script>
+</body>
+</html>

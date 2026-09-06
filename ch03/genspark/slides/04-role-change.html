@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="../assets/tokens.css">
+</head>
+<body style="margin:0; padding:0; overflow:hidden;">
+  <div class="slide-container" style="position:relative; width:1920px; height:1080px; overflow:hidden; background-color:var(--paper);">
+    
+    <!-- 장식용 비대칭 그리드 라인 (z-index: 1) -->
+    <div data-object="true" data-object-type="shape" 
+         style="position:absolute; left:90px; top:0px; width:1px; height:1080px; background-color:var(--line); z-index:1;"></div>
+    <div data-object="true" data-object-type="shape" 
+         style="position:absolute; left:0px; top:120px; width:1920px; height:1px; background-color:var(--line); z-index:1;"></div>
+    
+    <!-- 헤더 타이틀 블록 (z-index: 10) -->
+    <div data-object="true" data-object-type="textbox" 
+         style="position:absolute; left:140px; top:40px; width:1640px; z-index:10;">
+      <h2 style="margin:0; font-family:var(--font-sans); font-size:36px; font-weight:900; color:var(--ink);">
+        현재와 미래: 역할의 변화<span style="font-family:var(--font-serif); font-weight:400; font-style:italic; color:var(--muted);"> (The Transition)</span>
+      </h2>
+    </div>
+
+    <!-- 3단 세로 카드 배치 레이아웃 (z-index: 10) -->
+    <div data-object="true" data-object-type="textbox" 
+         style="position:absolute; left:140px; top:200px; width:1640px; height:700px; z-index:10;">
+      
+      <!-- 상단 리드문구 -->
+      <p style="margin:0 0 50px 0; font-family:var(--font-sans); font-weight:300; font-size:38px; line-height:1.5; color:var(--ink); word-break:keep-all;">
+        바이브 코딩의 물결은 기술 세계에서 인간의 위치와 역할을 더욱 가치 있는 방향으로 이끌어갑니다.
+      </p>
+
+      <!-- 카드형 레이아웃 배치 -->
+      <div style="display:flex; justify-content:space-between; width:100%; gap:40px;">
+        
+        <!-- 카드 1: 진입 장벽 완화 -->
+        <div style="flex:1; background-color:var(--paper-2); padding:50px 40px; border-radius:20px; display:flex; flex-direction:column; gap:25px; box-shadow:0 10px 30px rgba(0,0,0,0.03);">
+          <div style="font-family:var(--font-serif); font-size:48px; font-style:italic; color:var(--accent-ink); font-weight:700;">01</div>
+          <h3 style="margin:0; font-family:var(--font-sans); font-size:32px; font-weight:900; color:var(--ink);">진입 장벽 완화</h3>
+          <p style="margin:0; font-family:var(--font-sans); font-size:24px; line-height:1.7; color:var(--muted); word-break:keep-all;">
+            코드의 상세 구문을 모르는 기획자나 디자이너도 온전한 아이디어만으로 단 몇 시간 만에 실동하는 수준의 하이파이 프로토타입을 손수 제작하고 실험할 수 있게 됩니다.
+          </p>
+        </div>
+
+        <!-- 카드 2: 개발자 정체성의 진화 -->
+        <div style="flex:1; background-color:var(--paper-2); padding:50px 40px; border-radius:20px; display:flex; flex-direction:column; gap:25px; box-shadow:0 10px 30px rgba(0,0,0,0.03);">
+          <div style="font-family:var(--font-serif); font-size:48px; font-style:italic; color:var(--accent-ink); font-weight:700;">02</div>
+          <h3 style="margin:0; font-family:var(--font-sans); font-size:32px; font-weight:900; color:var(--ink);">정체성의 대진화</h3>
+          <p style="margin:0; font-family:var(--font-sans); font-size:24px; line-height:1.7; color:var(--muted); word-break:keep-all;">
+            개발자는 이제 코드 단순 작성자(Coder)를 너머, 다방면의 에이전트와 소프트웨어 아키텍처를 지휘하고 시스템 전체의 흐름을 통제하는 <strong>지휘자(Conductor)</strong>로 진화합니다.
+          </p>
+        </div>
+
+        <!-- 카드 3: 초신속화된 애자일 루프 -->
+        <div style="flex:1; background-color:var(--paper-2); padding:50px 40px; border-radius:20px; display:flex; flex-direction:column; gap:25px; box-shadow:0 10px 30px rgba(0,0,0,0.03);">
+          <div style="font-family:var(--font-serif); font-size:48px; font-style:italic; color:var(--accent-ink); font-weight:700;">03</div>
+          <h3 style="margin:0; font-family:var(--font-sans); font-size:32px; font-weight:900; color:var(--ink);">애자일과의 결합</h3>
+          <p style="margin:0; font-family:var(--font-sans); font-size:24px; line-height:1.7; color:var(--muted); word-break:keep-all;">
+            '선 구축, 후 최적화' 방식을 통해 가설을 가장 빠르고 세밀하게 시장에 던져 피드백을 모읍니다. 무의미한 설계 고도화 회의를 없애고 프로토타입 기반의 강력한 혁신을 가속화합니다.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 하단 메타 크롬 (z-index: 10) -->
+    <div data-object="true" data-object-type="textbox" 
+         style="position:absolute; left:140px; top:980px; width:800px; z-index:10;">
+      <p style="margin:0; font-family:var(--font-sans); font-size:16px; color:var(--muted);">바이브 코딩(Vibe Coding): 새로운 물결</p>
+    </div>
+
+    <div data-object="true" data-object-type="textbox" 
+         style="position:absolute; left:1700px; top:980px; width:130px; text-align:right; z-index:10;">
+      <p style="margin:0; font-family:var(--font-serif); font-size:20px; font-weight:700; color:var(--accent-ink);">04</p>
+    </div>
+
+  </div>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script src="../assets/navigation.js"></script>
+</body>
+</html>

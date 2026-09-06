@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="../assets/tokens.css">
+</head>
+<body style="margin:0; padding:0; overflow:hidden;">
+  <div class="slide-container" style="position:relative; width:1920px; height:1080px; overflow:hidden; background-color:var(--paper);">
+    
+    <!-- 장식용 비대칭 그리드 라인 (z-index: 1) -->
+    <div data-object="true" data-object-type="shape" 
+         style="position:absolute; left:90px; top:0px; width:1px; height:1080px; background-color:var(--line); z-index:1;"></div>
+    <div data-object="true" data-object-type="shape" 
+         style="position:absolute; left:0px; top:120px; width:1920px; height:1px; background-color:var(--line); z-index:1;"></div>
+    
+    <!-- 헤더 타이틀 블록 (z-index: 10) -->
+    <div data-object="true" data-object-type="textbox" 
+         style="position:absolute; left:140px; top:40px; width:1640px; z-index:10;">
+      <h2 style="margin:0; font-family:var(--font-sans); font-size:36px; font-weight:900; color:var(--ink);">
+        시대별 발전 과정<span style="font-family:var(--font-serif); font-weight:400; font-style:italic; color:var(--muted);"> (The Evolution)</span>
+      </h2>
+    </div>
+
+    <!-- 3단 타임라인 레이아웃 (z-index: 10) -->
+    <div data-object="true" data-object-type="textbox" 
+         style="position:absolute; left:140px; top:200px; width:1640px; height:680px; z-index:10;">
+      
+      <!-- 타임라인 메인 수평선 -->
+      <div style="position:relative; width:100%; height:4px; background-color:var(--line); margin-bottom:80px; margin-top:20px;">
+        <!-- 타임라인 포인트들 -->
+        <div style="position:absolute; left:10%; top:-10px; width:24px; height:24px; border-radius:50%; background-color:var(--muted);"></div>
+        <div style="position:absolute; left:50%; top:-10px; width:24px; height:24px; border-radius:50%; background-color:var(--muted);"></div>
+        <div style="position:absolute; left:90%; top:-10px; width:24px; height:24px; border-radius:50%; background-color:var(--accent);"></div>
+      </div>
+
+      <!-- 3개 영역 병렬 배치 (Flexbox) -->
+      <div style="display:flex; justify-content:space-between; width:100%;">
+        
+        <!-- 1단계: 태동기 -->
+        <div style="width:28%; display:flex; flex-direction:column; gap:20px;">
+          <span style="font-family:var(--font-serif); font-size:28px; font-style:italic; color:var(--muted); font-weight:700;">2021 ~ 2023</span>
+          <h3 style="margin:0; font-family:var(--font-sans); font-size:36px; font-weight:900; color:var(--ink);">태동기: 보조의 시작</h3>
+          <p style="margin:0; font-family:var(--font-sans); font-size:24px; line-height:1.7; color:var(--muted); word-break:keep-all;">
+            GitHub Copilot 및 ChatGPT의 전격 출시로 AI가 코딩의 영역에 스며든 시기입니다. 
+            자동 완성 및 챗봇 인터페이스 기반의 <strong>대화형 코딩 프로토타입</strong>이 성황을 이뤘습니다.
+          </p>
+        </div>
+
+        <!-- 2단계: 발전기 -->
+        <div style="width:28%; display:flex; flex-direction:column; gap:20px;">
+          <span style="font-family:var(--font-serif); font-size:28px; font-style:italic; color:var(--muted); font-weight:700;">2023 ~ 2024</span>
+          <h3 style="margin:0; font-family:var(--font-sans); font-size:36px; font-weight:900; color:var(--ink);">발전기: AI 네이티브 IDE</h3>
+          <p style="margin:0; font-family:var(--font-sans); font-size:24px; line-height:1.7; color:var(--muted); word-break:keep-all;">
+            Cursor, Windsurf 등 AI가 통합된 네이티브 코딩 환경이 대거 급부상했습니다. 
+            단순 스니펫 작성을 넘어, 맥락을 이해하고 의도를 해석하는 <strong>프롬프트 엔지니어링</strong>의 기초 체력이 핵심 화두가 되었습니다.
+          </p>
+        </div>
+
+        <!-- 3단계: 확산기 -->
+        <div style="width:28%; display:flex; flex-direction:column; gap:20px;">
+          <span style="font-family:var(--font-serif); font-size:28px; font-style:italic; color:var(--accent-ink); font-weight:700;">2025 ~ Present</span>
+          <h3 style="margin:0; font-family:var(--font-sans); font-size:36px; font-weight:900; color:var(--accent-ink);">확산기: 디렉팅 패러다임</h3>
+          <p style="margin:0; font-family:var(--font-sans); font-size:24px; line-height:1.7; color:var(--ink); word-break:keep-all;">
+            안드레이 카파시가 <strong>'바이브 코딩'</strong>을 공식 천명하며 개발의 개념이 근본적으로 리프레시되었습니다. 
+            기계적 제작자(Coder)에서 전체 아키텍처를 진두지휘하는 <strong>감독(Director)</strong>으로 온전한 리포지셔닝을 마친 시기입니다.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 하단 메타 크롬 (z-index: 10) -->
+    <div data-object="true" data-object-type="textbox" 
+         style="position:absolute; left:140px; top:980px; width:800px; z-index:10;">
+      <p style="margin:0; font-family:var(--font-sans); font-size:16px; color:var(--muted);">바이브 코딩(Vibe Coding): 새로운 물결</p>
+    </div>
+
+    <div data-object="true" data-object-type="textbox" 
+         style="position:absolute; left:1700px; top:980px; width:130px; text-align:right; z-index:10;">
+      <p style="margin:0; font-family:var(--font-serif); font-size:20px; font-weight:700; color:var(--accent-ink);">03</p>
+    </div>
+
+  </div>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script src="../assets/navigation.js"></script>
+</body>
+</html>

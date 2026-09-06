@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="../assets/tokens.css">
+</head>
+<body style="margin:0; padding:0; overflow:hidden;">
+  <div class="slide-container" style="position:relative; width:1920px; height:1080px; overflow:hidden; background-color:var(--paper);">
+    
+    <!-- 장식용 비대칭 그리드 라인 (z-index: 1) -->
+    <div data-object="true" data-object-type="shape" 
+         style="position:absolute; left:90px; top:0px; width:1px; height:1080px; background-color:var(--line); z-index:1;"></div>
+    <div data-object="true" data-object-type="shape" 
+         style="position:absolute; left:0px; top:900px; width:1920px; height:1px; background-color:var(--line); z-index:1;"></div>
+         
+    <!-- 상단 챕터 카운트/장식 (z-index: 10) -->
+    <div data-object="true" data-object-type="textbox" 
+         style="position:absolute; left:140px; top:120px; width:400px; z-index:10;">
+      <span style="font-family:var(--font-serif); font-style:italic; font-size:24px; color:var(--accent-ink); letter-spacing:0.05em;">Epilogue / The Final Word</span>
+    </div>
+
+    <!-- 대담한 중앙 집중형(하지만 살짝 비대칭으로 정렬된) 명언 레이아웃 (z-index: 10) -->
+    <div data-object="true" data-object-type="textbox" 
+         style="position:absolute; left:140px; top:240px; width:1640px; height:600px; z-index:10;">
+      
+      <!-- 인용 기호 -->
+      <span style="font-family:var(--font-serif); font-size:120px; line-height:1; color:var(--line); display:block; margin-bottom:-40px; margin-left:-20px;">“</span>
+      
+      <!-- 주 인용구 본문 (Playfair Display와 Noto Sans의 환상적인 매칭) -->
+      <blockquote style="margin:0; padding:0; border:none;">
+        <p style="margin:0 0 50px 0; font-family:var(--font-sans); font-weight:300; font-size:46px; line-height:1.7; color:var(--ink); word-break:keep-all;">
+          바이브 코딩은 단순한 기계적인 노동에서 벗어나, <br>
+          <strong>인간의 직관과 아이디어</strong>를 자연어로 유연하게 표현해 <br>
+          AI와 호흡을 맞추며 소프트웨어를 창조하는 <br>
+          현시대를 가장 잘 보여주는 상징적인 개발 방식입니다.
+        </p>
+      </blockquote>
+      
+      <!-- 인용 끝 기호 및 서명 -->
+      <div style="display:flex; justify-content:space-between; align-items:flex-end;">
+        <span style="font-family:var(--font-serif); font-size:120px; line-height:1; color:var(--line); margin-top:-40px;">”</span>
+        
+        <!-- 에필로그 캡션 -->
+        <p style="margin:0 0 20px 0; font-family:var(--font-serif); font-style:italic; font-size:28px; color:var(--muted);">
+          — Navigating the Winds of Change, 2026
+        </p>
+      </div>
+
+    </div>
+
+    <!-- 하단 메타 크롬 (z-index: 10) -->
+    <div data-object="true" data-object-type="textbox" 
+         style="position:absolute; left:140px; top:940px; width:800px; z-index:10;">
+      <p style="margin:0; font-family:var(--font-sans); font-size:16px; color:var(--muted);">바이브 코딩(Vibe Coding): 새로운 물결</p>
+    </div>
+
+    <div data-object="true" data-object-type="textbox" 
+         style="position:absolute; left:1700px; top:940px; width:130px; text-align:right; z-index:10;">
+      <p style="margin:0; font-family:var(--font-serif); font-size:20px; font-weight:700; color:var(--accent-ink);">07</p>
+    </div>
+
+  </div>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script src="../assets/navigation.js"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+# Vibe Todo List (바이브 투두 리스트) 📝
+
+Vibe Todo List는 Python FastAPI 백엔드와 React + TypeScript 프론트엔드로 구성된 풀스택(Full-stack) 투두 리스트 애플리케이션입니다.
+
+## 🏗️ 아키텍처 (Architecture)
+
+이 프로젝트는 두 가지 주요 컴포넌트로 나뉘어 있습니다:
+
+- **[`backend/`](./backend/)**: Python 및 FastAPI 기반의 REST API 서버입니다.
+- **[`frontend/`](./frontend/)**: Vite 기반의 React.js 및 TypeScript 프론트엔드 애플리케이션입니다.
+
+## 🚀 시작하기 (Getting Started)
+
+각 파트의 개발 환경 설정 및 실행 방법은 해당 디렉터리의 `README.md`를 참고해 주세요.
+
+- [백엔드 실행 가이드](./backend/README.md)
+- [프론트엔드 실행 가이드](./frontend/README.md)
+
+## 📖 개발자 가이드 및 컨벤션
+
+AI 에이전트 및 개발자가 지켜야 할 상세한 코딩 컨벤션과 아키텍처 원칙은 각 폴더의 `AGENTS.md` 파일에 영어로 작성되어 있습니다. 프로젝트의 내부 동작 방식이나 엄격한 규칙을 확인하려면 아래 문서를 참고하세요.
+
+- [전체 프로젝트 원칙](./AGENTS.md)
+- [백엔드 개발 원칙](./backend/AGENTS.md)
+- [프론트엔드 개발 원칙](./frontend/AGENTS.md)

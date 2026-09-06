@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>삼성전자 (SamsungElec) (005930.KS) - 주가 분석 보고서</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-card-hover: #1b2640;
+      --bg-card-subtle: #0f1626;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(59, 130, 246, 0.4);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-cyan: #06b6d4;
+      --bullish: #10b981;
+      --bullish-bg: rgba(16, 185, 129, 0.12);
+      --bearish: #ef4444;
+      --bearish-bg: rgba(239, 68, 68, 0.12);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.45);
+      --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 28px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    /* Header styling */
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      padding: 26px 32px;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.95));
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .badge-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-ticker {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--accent-blue);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      font-family: var(--font-mono);
+    }
+
+    .badge-sector {
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--accent-purple);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .badge-exchange {
+      background: rgba(156, 163, 175, 0.1);
+      color: var(--text-muted);
+    }
+
+    .company-title {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+
+    .header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .current-price {
+      font-family: var(--font-mono);
+      font-size: 2.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .change-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+    }
+
+    .change-tag.bullish {
+      background: var(--bullish-bg);
+      color: var(--bullish);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .change-tag.bearish {
+      background: var(--bearish-bg);
+      color: var(--bearish);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    .change-tag.neutral {
+      background: rgba(156, 163, 175, 0.1);
+      color: var(--text-muted);
+    }
+
+    .meta-time {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-accent);
+      background-color: var(--bg-card-hover);
+    }
+
+    .kpi-label {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .kpi-value {
+      font-size: 1.35rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: #ffffff;
+    }
+
+    .kpi-subtext {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    /* Range Progress Bar */
+    .range-bar-wrapper {
+      margin-top: 6px;
+    }
+
+    .range-bar-track {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .range-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+      border-radius: 999px;
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      margin-top: 4px;
+    }
+
+    /* Main Chart Card */
+    .chart-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .chart-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      gap: 12px;
+    }
+
+    .chart-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #ffffff;
+    }
+
+    .chart-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-toggle {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-toggle:hover {
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-toggle.active {
+      background: var(--accent-blue);
+      color: #ffffff;
+      border-color: var(--accent-blue);
+    }
+
+    .chart-canvas-container {
+      position: relative;
+      width: 100%;
+      height: 380px;
+    }
+
+    .volume-canvas-container {
+      position: relative;
+      width: 100%;
+      height: 110px;
+      margin-top: 14px;
+    }
+
+    /* Multi-stock comparative section */
+    .compare-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+
+    .compare-table th {
+      text-align: left;
+      padding: 14px 12px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .compare-table td {
+      padding: 16px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.92rem;
+    }
+
+    /* Two-column details grid */
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+      }
+      .header-right {
+        align-items: flex-start;
+      }
+    }
+
+    .panel-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 28px;
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 14px;
+    }
+
+    .metric-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .metric-table tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .metric-table tr:last-child {
+      border-bottom: none;
+    }
+
+    .metric-table td {
+      padding: 11px 4px;
+      font-size: 0.9rem;
+    }
+
+    .metric-table td.label {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .metric-table td.val {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    /* Target Price Gauge */
+    .target-gauge-box {
+      background: var(--bg-card-subtle);
+      border-radius: 14px;
+      padding: 18px;
+      margin-top: 18px;
+      border: 1px solid var(--border-color);
+    }
+
+    .target-gauge-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .consensus-badge {
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+    }
+
+    .consensus-buy {
+      background: var(--bullish-bg);
+      color: var(--bullish);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .consensus-hold {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .consensus-sell {
+      background: var(--bearish-bg);
+      color: var(--bearish);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .company-summary-text {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+      max-height: 250px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 28px;
+      color: var(--text-dim);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Top Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="badge-row">
+          <span class="badge badge-ticker">005930.KS</span>
+          <span class="badge badge-sector">Technology</span>
+          <span class="badge badge-exchange">KSC</span>
+        </div>
+        <h1 class="company-title">삼성전자 (SamsungElec)</h1>
+        <div style="color: var(--text-muted); font-size: 0.92rem;">Consumer Electronics • South Korea</div>
+      </div>
+      <div class="header-right">
+        <div class="current-price">274,500원</div>
+        <div class="change-tag bullish">
+          <span>▲</span>
+          <span>6,500원</span>
+          <span>(+2.43%)</span>
+        </div>
+        <div class="meta-time">기준일시: 2026-08-15 14:54:43 (3MO 차트)</div>
+      </div>
+    </header>
+
+    <!-- Key Performance Indicators Grid -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>시가총액</span>
+          <span>🏢</span>
+        </div>
+        <div class="kpi-value">1802.52조 원</div>
+        <div class="kpi-subtext">Market Capitalization</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>PER (TTM) / PBR</span>
+          <span>📊</span>
+        </div>
+        <div class="kpi-value">N/A배</div>
+        <div class="kpi-subtext">PBR: N/A배 | Fwd PER: 4.1배</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>52주 최고/최저</span>
+          <span>📈</span>
+        </div>
+        <div class="kpi-value" style="font-size: 1.08rem;">
+          67,500원 - 374,500원
+        </div>
+        <div class="range-bar-wrapper">
+          <div class="range-bar-track">
+            <div class="range-bar-fill" style="width: 67.4%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>목표주가 (평균)</span>
+          <span>🎯</span>
+        </div>
+        <div class="kpi-value" style="color: var(--accent-cyan);">
+          471,908원
+        </div>
+        <div class="kpi-subtext">
+          애널리스트 37명 의견
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>배당수익률 (Dividend)</span>
+          <span>💰</span>
+        </div>
+        <div class="kpi-value">
+          0.54%
+        </div>
+        <div class="kpi-subtext">Beta: 1.56</div>
+      </div>
+    </section>
+
+    <!-- Main Interactive Chart -->
+    <section class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">
+          <span>📉 삼성전자 (SamsungElec) 주가 변동 추이 (3MO)</span>
+        </div>
+        <div class="chart-actions">
+          <button class="btn-toggle active" id="btnLine">라인 차트</button>
+          <button class="btn-toggle" id="btnSma">20일 이동평균 (SMA)</button>
+        </div>
+      </div>
+      <div class="chart-canvas-container">
+        <canvas id="stockPriceChart"></canvas>
+      </div>
+      <div class="volume-canvas-container">
+        <canvas id="volumeChart"></canvas>
+      </div>
+    </section>
+
+    <!-- Multi-stock comparison (if applicable) -->
+    
+
+    <!-- Detailed Valuation & Company Profile Grid -->
+    <div class="details-grid">
+      <!-- Valuation & Financial Metrics -->
+      <section class="panel-card">
+        <h2 class="panel-title">📋 주요 펀더멘털 & 지표</h2>
+        <table class="metric-table">
+          <tr>
+            <td class="label">시가 (Open)</td>
+            <td class="val">275,000원</td>
+          </tr>
+          <tr>
+            <td class="label">전일 종가 (Prev Close)</td>
+            <td class="val">268,000원</td>
+          </tr>
+          <tr>
+            <td class="label">일중 변동폭 (Day Range)</td>
+            <td class="val">266,000원 - 275,500원</td>
+          </tr>
+          <tr>
+            <td class="label">거래량 (Volume)</td>
+            <td class="val">23,034,616</td>
+          </tr>
+          <tr>
+            <td class="label">평균 거래량 (Avg Volume)</td>
+            <td class="val">30,853,399</td>
+          </tr>
+          <tr>
+            <td class="label">주당순이익 (EPS / Fwd EPS)</td>
+            <td class="val">N/A / N/A</td>
+          </tr>
+          <tr>
+            <td class="label">50일 이동평균선 (50D MA)</td>
+            <td class="val">285,570원</td>
+          </tr>
+          <tr>
+            <td class="label">200일 이동평균선 (200D MA)</td>
+            <td class="val">202,053원</td>
+          </tr>
+        </table>
+
+        <!-- Analyst Gauge -->
+        <div class="target-gauge-box">
+          <div class="target-gauge-header">
+            <span style="font-weight:600; font-size:0.9rem;">애널리스트 투자의견</span>
+            <span class="consensus-badge consensus-buy">
+              강력 매수 (Strong Buy)
+            </span>
+          </div>
+          <div class="range-labels">
+            <span>최저: 210,000원</span>
+            <span>평균: 471,908원</span>
+            <span>최고: 725,000원</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Company Profile -->
+      <section class="panel-card">
+        <h2 class="panel-title">🏢 기업 개요 및 비즈니스</h2>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div>
+            <strong style="color:#ffffff;">웹사이트:</strong> 
+            <a href="https://www.samsung.com" target="_blank" style="color:var(--accent-blue); text-decoration:none;">https://www.samsung.com</a>
+          </div>
+          <div>
+            <strong style="color:#ffffff;">임직원 수:</strong> N/A명
+          </div>
+          <div>
+            <strong style="color:#ffffff;">사업 요약:</strong>
+            <p class="company-summary-text" style="margin-top: 8px;">
+              삼성전자주식회사는 전 세계적으로 가전제품, 정보 기술, 모바일 통신, 장치 솔루션 사업을 영위하고 있습니다. 이 회사는 DX(Device eXperience), DS(Device Solutions), SDC 및 Harman의 4개 부문으로 운영됩니다. 이 회사는 스마트폰, 태블릿, 오디오 사운드, 시계, 스위치 및 액세서리를 제공합니다. TV 및 음향기기 냉장고, 세탁기 및 건조기, 진공청소기, 조리기구, 식기세척기, 에어컨, 공기청정기를 포함한 가전제품; 모니터 및 메모리 저장 제품; 디스플레이, 스마트 및 LED 간판; 및 기타 액세서리. 또한 벤처 캐피털 투자, 클라우드 서비스, 네트워크 장치 설치, 반도체 장비 서비스, 디지털 광고 플랫폼, 마케팅, 컨설팅, 연결 서비스 제공업체, 물류, 금융 및 소프트웨어 설계 활동에도 참여합니다. 또한, 회사는 반도체 및 디스플레이 패널의 임가공 및 판매를 제공합니다. 네트워크 솔루션 개발 및 판매; 반도체 및 식품 제조; 전자 장치 수리 서비스 제공; 반도체 공정 불량 및 품질관리 소프트웨어 개발 및 공급, 디지털 TV, 파운드리, 시스템 대규모 통합(LSI) 등을 담당하고 있습니다. 또한 연결된 자동차 시스템, 시청각 제품, 엔터프라이즈 자동화 솔루션 및 연결된 서비스를 제공합니다. 삼성전자주식회사는 1969년에 설립되었으며 대한민국 수원시에 본사를 두고 있습니다.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      Generated automatically by Antigravity Stock Skill (powered by yfinance) • 2026-08-15 14:54:43
+    </footer>
+
+  </div>
+
+  <!-- Chart.js Script Logic -->
+  <script>
+    const stockData = [{"symbol": "005930.KS", "query_name": "삼성전자", "display_title": "삼성전자 (SamsungElec)", "short_name": "SamsungElec", "long_name": "Samsung Electronics Co., Ltd.", "currency": "KRW", "exchange": "KSC", "current_price": 274500.0, "previous_close": 268000.0, "price_change": 6500.0, "pct_change": 2.425373134328358, "period": "3mo", "interval": "1d", "period_change": -21173.9375, "period_pct_change": -7.161245823365816, "period_high": 374087.44831391243, "period_low": 189200.0, "fundamentals": {"market_cap": 1802521672679424, "market_cap_fmt": "1802.52조 원", "pe_ratio": null, "forward_pe": 4.086378, "pbr": null, "eps": null, "forward_eps": null, "beta": 1.557, "dividend_yield": 0.54, "fifty_two_week_high": 374500.0, "fifty_two_week_low": 67500.0, "fifty_day_avg": 285570.0, "two_hundred_day_avg": 202052.75, "volume": 23034616, "avg_volume": 30853399, "day_high": 275500.0, "day_low": 266000.0, "open": 275000.0}, "analyst": {"target_mean": 471908.2, "target_high": 725000.0, "target_low": 210000.0, "recommendation": "strong_buy", "opinions_count": 37}, "profile": {"short_name": "SamsungElec", "long_name": "Samsung Electronics Co., Ltd.", "display_title": "삼성전자 (SamsungElec)", "sector": "Technology", "industry": "Consumer Electronics", "country": "South Korea", "website": "https://www.samsung.com", "summary": "삼성전자주식회사는 전 세계적으로 가전제품, 정보 기술, 모바일 통신, 장치 솔루션 사업을 영위하고 있습니다. 이 회사는 DX(Device eXperience), DS(Device Solutions), SDC 및 Harman의 4개 부문으로 운영됩니다. 이 회사는 스마트폰, 태블릿, 오디오 사운드, 시계, 스위치 및 액세서리를 제공합니다. TV 및 음향기기 냉장고, 세탁기 및 건조기, 진공청소기, 조리기구, 식기세척기, 에어컨, 공기청정기를 포함한 가전제품; 모니터 및 메모리 저장 제품; 디스플레이, 스마트 및 LED 간판; 및 기타 액세서리. 또한 벤처 캐피털 투자, 클라우드 서비스, 네트워크 장치 설치, 반도체 장비 서비스, 디지털 광고 플랫폼, 마케팅, 컨설팅, 연결 서비스 제공업체, 물류, 금융 및 소프트웨어 설계 활동에도 참여합니다. 또한, 회사는 반도체 및 디스플레이 패널의 임가공 및 판매를 제공합니다. 네트워크 솔루션 개발 및 판매; 반도체 및 식품 제조; 전자 장치 수리 서비스 제공; 반도체 공정 불량 및 품질관리 소프트웨어 개발 및 공급, 디지털 TV, 파운드리, 시스템 대규모 통합(LSI) 등을 담당하고 있습니다. 또한 연결된 자동차 시스템, 시청각 제품, 엔터프라이즈 자동화 솔루션 및 연결된 서비스를 제공합니다. 삼성전자주식회사는 1969년에 설립되었으며 대한민국 수원시에 본사를 두고 있습니다.", "employees": null}, "history": [{"date": "2026-05-14", "open": 281689.36, "high": 299170.08, "low": 281689.36, "close": 295673.94, "volume": 39314752}, {"date": "2026-05-15", "open": 290679.42, "high": 296173.36, "low": 265706.96, "close": 270202.0, "volume": 38075487}, {"date": "2026-05-18", "open": 269203.11, "high": 288182.18, "low": 261711.37, "close": 280690.44, "volume": 33555214}, {"date": "2026-05-19", "open": 273698.15, "high": 281189.89, "low": 265706.97, "close": 275196.5, "volume": 30767569}, {"date": "2026-05-20", "open": 277693.77, "high": 282188.81, "low": 263209.74, "close": 275695.97, "volume": 35662077}, {"date": "2026-05-21", "open": 290679.43, "high": 299170.06, "low": 286683.83, "close": 299170.06, "volume": 36168689}, {"date": "2026-05-22", "open": 299669.52, "high": 300168.97, "low": 291678.33, "close": 292177.78, "volume": 18395274}, {"date": "2026-05-26", "open": 297671.73, "high": 301667.32, "low": 297172.28, "close": 298670.62, "volume": 23441371}, {"date": "2026-05-27", "open": 321145.84, "high": 322644.19, "low": 305662.91, "close": 306661.81, "volume": 33916688}, {"date": "2026-05-28", "open": 304664.0, "high": 306162.35, "low": 287183.28, "close": 299170.06, "volume": 30195334}, {"date": "2026-05-29", "open": 309159.04, "high": 318648.58, "low": 305163.45, "close": 316650.78, "volume": 37241537}, {"date": "2026-06-01", "open": 319148.03, "high": 354109.47, "low": 319148.03, "close": 348615.53, "volume": 45052488}, {"date": "2026-06-02", "open": 360102.88, "high": 369592.41, "low": 341623.25, "close": 360102.88, "volume": 44720282}, {"date": "2026-06-04", "open": 348615.54, "high": 365596.81, "low": 347616.64, "close": 351112.78, "volume": 34771037}, {"date": "2026-06-05", "open": 333132.61, "high": 342622.14, "low": 324641.97, "close": 328637.56, "volume": 33725012}, {"date": "2026-06-08", "open": 292677.22, "high": 315152.44, "low": 292177.77, "close": 295174.47, "volume": 38929682}, {"date": "2026-06-09", "open": 309658.5, "high": 323643.08, "low": 299669.52, "close": 321645.28, "volume": 30124249}, {"date": "2026-06-10", "open": 310657.39, "high": 314153.53, "low": 294924.74, "close": 302166.75, "volume": 1191}, {"date": "2026-06-11", "open": 290179.99, "high": 306162.36, "low": 287183.29, "close": 298670.62, "volume": 31420307}, {"date": "2026-06-12", "open": 325640.86, "high": 338626.54, "low": 319647.47, "close": 322144.72, "volume": 31006148}, {"date": "2026-06-15", "open": 342122.69, "high": 344120.49, "low": 333632.05, "close": 336628.75, "volume": 21500067}, {"date": "2026-06-16", "open": 342622.16, "high": 345119.4, "low": 332133.72, "close": 342622.16, "volume": 17548685}, {"date": "2026-06-17", "open": 331634.26, "high": 347616.63, "low": 331134.81, "close": 346118.28, "volume": 18134051}, {"date": "2026-06-18", "open": 344619.93, "high": 362600.11, "low": 344120.49, "close": 362100.66, "volume": 32764450}, {"date": "2026-06-19", "open": 372089.65, "high": 374087.45, "low": 345868.57, "close": 353610.03, "volume": 43284898}, {"date": "2026-06-22", "open": 342622.16, "high": 362600.13, "low": 341623.26, "close": 353110.59, "volume": 24330451}, {"date": "2026-06-23", "open": 347117.19, "high": 352611.13, "low": 309658.5, "close": 309658.5, "volume": 41266630}, {"date": "2026-06-24", "open": 313654.1, "high": 340624.36, "low": 313654.1, "close": 340124.91, "volume": 47809959}, {"date": "2026-06-25", "open": 359103.96, "high": 362100.66, "low": 351612.22, "close": 358105.06, "volume": 36157158}, {"date": "2026-06-26", "open": 353610.03, "high": 356107.27, "low": 321145.83, "close": 339126.0, "volume": 39735951}, {"date": "2026-06-29", "open": 331000.0, "high": 335500.0, "low": 316000.0, "close": 323000.0, "volume": 35436521}, {"date": "2026-06-30", "open": 323500.0, "high": 343000.0, "low": 321000.0, "close": 334000.0, "volume": 29237216}, {"date": "2026-07-01", "open": 334500.0, "high": 339000.0, "low": 311500.0, "close": 314500.0, "volume": 24968382}, {"date": "2026-07-02", "open": 290000.0, "high": 304000.0, "low": 281500.0, "close": 286000.0, "volume": 38905074}, {"date": "2026-07-03", "open": 288500.0, "high": 313000.0, "low": 283500.0, "close": 309500.0, "volume": 31520538}, {"date": "2026-07-06", "open": 320000.0, "high": 325000.0, "low": 303000.0, "close": 318000.0, "volume": 23872879}, {"date": "2026-07-07", "open": 307000.0, "high": 310000.0, "low": 286000.0, "close": 296000.0, "volume": 32421032}, {"date": "2026-07-08", "open": 285500.0, "high": 300000.0, "low": 273500.0, "close": 277500.0, "volume": 33525758}, {"date": "2026-07-09", "open": 288500.0, "high": 291500.0, "low": 267500.0, "close": 278000.0, "volume": 29703616}, {"date": "2026-07-10", "open": 291000.0, "high": 298000.0, "low": 282000.0, "close": 285000.0, "volume": 20088811}, {"date": "2026-07-13", "open": 285000.0, "high": 292500.0, "low": 253000.0, "close": 254500.0, "volume": 31882652}, {"date": "2026-07-14", "open": 255000.0, "high": 270000.0, "low": 247000.0, "close": 263000.0, "volume": 40086496}, {"date": "2026-07-15", "open": 283500.0, "high": 284500.0, "low": 273000.0, "close": 279500.0, "volume": 24873414}, {"date": "2026-07-16", "open": 264500.0, "high": 265500.0, "low": 252500.0, "close": 255000.0, "volume": 27001478}, {"date": "2026-07-20", "open": 241000.0, "high": 257500.0, "low": 240000.0, "close": 244000.0, "volume": 26804038}, {"date": "2026-07-21", "open": 247000.0, "high": 263500.0, "low": 243000.0, "close": 259000.0, "volume": 20386896}, {"date": "2026-07-22", "open": 276000.0, "high": 276000.0, "low": 260000.0, "close": 260500.0, "volume": 22292003}, {"date": "2026-07-23", "open": 269000.0, "high": 273000.0, "low": 263000.0, "close": 270000.0, "volume": 16011816}, {"date": "2026-07-24", "open": 266000.0, "high": 266500.0, "low": 247000.0, "close": 249500.0, "volume": 26175580}, {"date": "2026-07-27", "open": 257000.0, "high": 258500.0, "low": 246000.0, "close": 254000.0, "volume": 23296044}, {"date": "2026-07-28", "open": 238500.0, "high": 240000.0, "low": 218500.0, "close": 220000.0, "volume": 41639623}, {"date": "2026-07-29", "open": 226500.0, "high": 234000.0, "low": 189200.0, "close": 208500.0, "volume": 65555523}, {"date": "2026-07-30", "open": 214000.0, "high": 226000.0, "low": 202000.0, "close": 207000.0, "volume": 46694193}, {"date": "2026-07-31", "open": 257000.0, "high": 267000.0, "low": 243000.0, "close": 262500.0, "volume": 58478873}, {"date": "2026-08-03", "open": 248000.0, "high": 249500.0, "low": 238000.0, "close": 239500.0, "volume": 27825493}, {"date": "2026-08-04", "open": 244500.0, "high": 244500.0, "low": 228000.0, "close": 240000.0, "volume": 29433821}, {"date": "2026-08-05", "open": 254000.0, "high": 254500.0, "low": 244000.0, "close": 246000.0, "volume": 22577128}, {"date": "2026-08-06", "open": 241500.0, "high": 246000.0, "low": 228000.0, "close": 230500.0, "volume": 26101823}, {"date": "2026-08-07", "open": 235000.0, "high": 239500.0, "low": 229000.0, "close": 231000.0, "volume": 20546010}, {"date": "2026-08-10", "open": 236000.0, "high": 238500.0, "low": 228500.0, "close": 230000.0, "volume": 16327805}, {"date": "2026-08-11", "open": 229500.0, "high": 243000.0, "low": 227500.0, "close": 239500.0, "volume": 23310969}, {"date": "2026-08-12", "open": 243500.0, "high": 260500.0, "low": 241000.0, "close": 255500.0, "volume": 27102479}, {"date": "2026-08-13", "open": 267500.0, "high": 271000.0, "low": 262500.0, "close": 268000.0, "volume": 35530867}, {"date": "2026-08-14", "open": 275000.0, "high": 275500.0, "low": 266000.0, "close": 274500.0, "volume": 21669476}], "fetched_at": "2026-08-15 14:54:43"}];
+    const primaryStock = stockData[0];
+    const history = primaryStock.history || [];
+
+    const labels = history.map(item => item.date);
+    const closePrices = history.map(item => item.close);
+    const volumes = history.map(item => item.volume);
+
+    // Calculate 20-day Simple Moving Average
+    function calculateSMA(data, window = 20) {
+      const sma = [];
+      for (let i = 0; i < data.length; i++) {
+        if (i < window - 1) {
+          sma.push(null);
+        } else {
+          let sum = 0;
+          for (let j = 0; j < window; j++) {
+            sum += data[i - j];
+          }
+          sma.push(Number((sum / window).toFixed(2)));
+        }
+      }
+      return sma;
+    }
+
+    const sma20 = calculateSMA(closePrices, 20);
+
+    // Color gradient for price chart
+    const ctxPrice = document.getElementById('stockPriceChart').getContext('2d');
+    const gradient = ctxPrice.createLinearGradient(0, 0, 0, 380);
+    const isBull = (primaryStock.period_pct_change || 0) >= 0;
+    
+    if (isBull) {
+      gradient.addColorStop(0, 'rgba(16, 185, 129, 0.35)');
+      gradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+    } else {
+      gradient.addColorStop(0, 'rgba(239, 68, 68, 0.35)');
+      gradient.addColorStop(1, 'rgba(239, 68, 68, 0.0)');
+    }
+
+    const priceChart = new Chart(ctxPrice, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: `${primaryStock.display_title} 주가 (${primaryStock.currency})`,
+            data: closePrices,
+            borderColor: isBull ? '#10b981' : '#ef4444',
+            backgroundColor: gradient,
+            borderWidth: 2.5,
+            fill: true,
+            tension: 0.15,
+            pointRadius: labels.length > 50 ? 0 : 2,
+            pointHoverRadius: 6
+          },
+          {
+            label: '20일 이동평균 (SMA)',
+            data: sma20,
+            borderColor: '#3b82f6',
+            borderWidth: 1.5,
+            borderDash: [4, 4],
+            fill: false,
+            pointRadius: 0,
+            hidden: true
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#9ca3af',
+              font: { family: 'Inter', size: 12 }
+            }
+          },
+          tooltip: {
+            backgroundColor: '#1e293b',
+            titleColor: '#f8fafc',
+            bodyColor: '#cbd5e1',
+            borderColor: '#334155',
+            borderWidth: 1,
+            padding: 12
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255, 255, 255, 0.04)' },
+            ticks: { color: '#64748b', maxTicksLimit: 10, font: { family: 'JetBrains Mono', size: 11 } }
+          },
+          y: {
+            grid: { color: 'rgba(255, 255, 255, 0.04)' },
+            ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 11 } }
+          }
+        }
+      }
+    });
+
+    // Volume Chart
+    const ctxVol = document.getElementById('volumeChart').getContext('2d');
+    const volumeChart = new Chart(ctxVol, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: '거래량 (Volume)',
+          data: volumes,
+          backgroundColor: 'rgba(59, 130, 246, 0.45)',
+          hoverBackgroundColor: 'rgba(59, 130, 246, 0.8)',
+          borderRadius: 3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#1e293b',
+            titleColor: '#f8fafc',
+            bodyColor: '#cbd5e1',
+            padding: 8
+          }
+        },
+        scales: {
+          x: { display: false },
+          y: {
+            grid: { color: 'rgba(255, 255, 255, 0.04)' },
+            ticks: { color: '#64748b', maxTicksLimit: 3, font: { family: 'JetBrains Mono', size: 10 } }
+          }
+        }
+      }
+    });
+
+    // Toggle SMA
+    const btnSma = document.getElementById('btnSma');
+    btnSma.addEventListener('click', () => {
+      const smaDataset = priceChart.data.datasets[1];
+      smaDataset.hidden = !smaDataset.hidden;
+      btnSma.classList.toggle('active', !smaDataset.hidden);
+      priceChart.update();
+    });
+
+    // Multi-stock compare chart if multi stocks exist
+    if (stockData.length > 1 && document.getElementById('multiCompareChart')) {
+      const palette = ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'];
+      const multiDatasets = stockData.map((item, idx) => {
+        const h = item.history || [];
+        const basePrice = h.length > 0 ? h[0].close : 1;
+        const normData = h.map(pt => Number((((pt.close - basePrice) / basePrice) * 100).toFixed(2)));
+        return {
+          label: `${item.display_title} (%)`,
+          data: normData,
+          borderColor: palette[idx % palette.length],
+          backgroundColor: 'transparent',
+          borderWidth: 2.2,
+          pointRadius: 0,
+          tension: 0.15
+        };
+      });
+
+      const ctxMulti = document.getElementById('multiCompareChart').getContext('2d');
+      new Chart(ctxMulti, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: multiDatasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#9ca3af', font: { family: 'Inter', size: 12 } } },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y > 0 ? '+' : ''}${ctx.parsed.y}%`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#64748b' } },
+            y: {
+              grid: { color: 'rgba(255, 255, 255, 0.04)' },
+              ticks: {
+                color: '#64748b',
+                callback: (val) => `${val > 0 ? '+' : ''}${val}%`
+              }
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,345 @@
+/* ==========================================================================
+   Base Design System & Theme Variables
+   Jackson Portfolio Style (ch16)
+   ========================================================================== */
+
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+/* ==========================================================================
+   MaruBuri Web Font Family (Main Font)
+   ========================================================================== */
+@font-face {
+  font-family: 'MaruBuri';
+  src: url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-ExtraLight.woff2') format('woff2'),
+       url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-ExtraLight.woff') format('woff');
+  font-weight: 200;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MaruBuri';
+  src: url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Light.woff2') format('woff2'),
+       url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Light.woff') format('woff');
+  font-weight: 300;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MaruBuri';
+  src: url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff2') format('woff2'),
+       url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Regular.woff') format('woff');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MaruBuri';
+  src: url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-SemiBold.woff2') format('woff2'),
+       url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MaruBuri';
+  src: url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Bold.woff2') format('woff2'),
+       url('https://hangeul.pstatic.net/hangeul_static/webfont/MaruBuri/MaruBuri-Bold.woff') format('woff');
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  /* Jackson 6 Signature Accent Colors */
+  --color-1: #2c98f0; /* Jackson Blue (Primary) */
+  --color-2: #ec5453; /* Jackson Coral Red */
+  --color-3: #f9bf3f; /* Jackson Golden Yellow */
+  --color-4: #a84cb8; /* Jackson Royal Purple */
+  --color-5: #2fa499; /* Jackson Mint Teal */
+  --color-6: #40acff; /* Jackson Sky Blue */
+
+  --accent-primary: var(--color-1);
+  --accent-primary-light: #52a9f3;
+  --accent-primary-dark: #1f77c2;
+  --accent-secondary: var(--color-4);
+  --accent-emerald: #10b981;
+  --accent-amber: var(--color-3);
+  --accent-rose: var(--color-2);
+  --accent-cyan: var(--color-6);
+
+  /* Layout Dimensions */
+  --sidebar-width: 300px;
+  --container-max: 1140px;
+
+  /* Typography - Jackson Dual-Font Hierarchy */
+  --font-main: 'MaruBuri', 'Quicksand', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-serif: 'Playfair Display', 'MaruBuri', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Quicksand', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Radii & Transitions */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Default Clean Light Theme (Jackson Benchmark) */
+  --bg-primary: #f2f3f7;       /* Jackson Classic Light Sidebar */
+  --bg-secondary: #ffffff;     /* Jackson Classic Light Main Canvas */
+  --bg-tertiary: #f9f9fb;
+  --bg-card: #ffffff;
+  --bg-card-hover: #ffffff;
+  --bg-glass: rgba(255, 255, 255, 0.95);
+
+  --border-subtle: rgba(0, 0, 0, 0.08);
+  --border-medium: rgba(0, 0, 0, 0.14);
+  --border-focus: rgba(44, 152, 240, 0.5);
+
+  --text-primary: #000000;
+  --text-secondary: rgba(0, 0, 0, 0.72);
+  --text-muted: rgba(0, 0, 0, 0.45);
+  --text-inverse: #ffffff;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 10px 30px -12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 20px 40px -15px rgba(0, 0, 0, 0.12);
+  --shadow-color1: 0 10px 30px -10px rgba(44, 152, 240, 0.25);
+
+  --gradient-card: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+  --banner-yellow: #f9bf3f;
+}
+
+/* Dark Theme Variables (Matte Minimalist Slate) */
+[data-theme="dark"] {
+  --bg-primary: #0b0f19;       /* Sidebar Background */
+  --bg-secondary: #111827;     /* Main Content Background */
+  --bg-tertiary: #192237;      /* Subtle Contrast Background */
+  --bg-card: #192237;
+  --bg-card-hover: #202b44;
+  --bg-glass: rgba(17, 24, 39, 0.9);
+
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.16);
+  --border-focus: rgba(44, 152, 240, 0.6);
+
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #8492a6;
+  --text-inverse: #0f172a;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 30px -10px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 20px 45px -12px rgba(0, 0, 0, 0.6);
+  --shadow-color1: 0 10px 30px -10px rgba(44, 152, 240, 0.35);
+
+  --gradient-card: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  --banner-yellow: #d49e1e;
+}
+
+/* ==========================================================================
+   CSS Reset & Base Global Styles
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+  line-height: 1.8;
+  font-weight: 400;
+  overflow-x: hidden;
+  position: relative;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+}
+
+/* Jackson Heading Hierarchy */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+  font-family: var(--font-serif);
+  font-weight: 400;
+  line-height: 1.35;
+  margin-bottom: 20px;
+  transition: color var(--transition-normal);
+}
+
+h1 { font-size: 2.2rem; }
+h2 { font-size: 1.85rem; }
+h3 { font-size: 1.45rem; }
+h4 { font-size: 1.15rem; }
+
+p {
+  margin-bottom: 1.5em;
+}
+
+a {
+  color: var(--color-1);
+  text-decoration: none;
+  transition: color var(--transition-fast), opacity var(--transition-fast);
+}
+
+a:hover, a:focus {
+  color: var(--accent-primary-light);
+  outline: none;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Ambient Background Lights - Disabled for Clean Editorial Jackson Vibe */
+.bg-ambient-lights,
+.bg-grid-overlay {
+  display: none !important;
+}
+
+/* ==========================================================================
+   Jackson 2-Column Split Layout System
+   ========================================================================== */
+
+.page-wrapper {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Left Sidebar (Fixed) */
+.sidebar {
+  width: var(--sidebar-width);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  background-color: var(--bg-primary);
+  border-right: 1px solid var(--border-subtle);
+  padding: 45px 30px 30px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 1000;
+  overflow-y: auto;
+  transition: transform var(--transition-normal), background-color var(--transition-normal), border-color var(--transition-normal);
+}
+
+/* Right Main Content */
+.main-content {
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  background-color: var(--bg-secondary);
+  position: relative;
+  z-index: 1;
+  min-height: 100vh;
+  transition: background-color var(--transition-normal);
+}
+
+.section-container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 45px;
+}
+
+/* Section Common */
+.section {
+  padding: 85px 0;
+  position: relative;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.section:last-of-type {
+  border-bottom: none;
+}
+
+/* Jackson Section Header & Meta Tag (Classic Editorial Benchmark) */
+.section-header {
+  margin-bottom: 45px;
+  position: relative;
+}
+
+.heading-meta {
+  display: block;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 5px;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 2.1rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.section-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 800px;
+  line-height: 1.8;
+}
+
+/* Clean Editorial Text Emphasis (No tacky rainbow gradients) */
+.gradient-text {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   Responsive Breakpoints & Off-canvas Mobile Menu
+   ========================================================================== */
+
+@media (max-width: 992px) {
+  .sidebar {
+    transform: translateX(-100%); /* Hidden by default on mobile */
+    box-shadow: none;
+  }
+
+  body.offcanvas .sidebar {
+    transform: translateX(0); /* Slide in */
+    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.4);
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .section-container {
+    padding: 0 24px;
+  }
+
+  .section {
+    padding: 70px 0;
+  }
+}

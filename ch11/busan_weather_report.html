@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>부산 날씨 보고서 | Weather Report</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: rgba(26, 34, 53, 0.75);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent: #38bdf8;
+            --accent-gradient: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --radius-lg: 20px;
+            --radius-md: 14px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+            background-color: var(--bg-color);
+            background-image: radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%),
+                              radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.12) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 32px 16px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .loc-header h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .loc-sub {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 4px;
+        }
+
+        .time-badge {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Hero Current Weather */
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            align-items: center;
+        }
+
+        @media (max-width: 680px) {
+            .hero-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .current-main {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .temp-display {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+        }
+
+        .current-temp {
+            font-size: 4.2rem;
+            font-weight: 800;
+            line-height: 1;
+            letter-spacing: -2px;
+        }
+
+        .current-condition-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: fit-content;
+        }
+
+        .feels-like {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .metric-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .metric-val {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Tips Card */
+        .tips-card {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.08) 0%, rgba(99, 102, 241, 0.08) 100%);
+            border-color: rgba(56, 189, 248, 0.2);
+        }
+
+        .tips-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .tips-list li {
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Air Quality */
+        .aq-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+        }
+
+        .aq-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .aq-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .aq-value {
+            font-size: 1.25rem;
+            font-weight: 800;
+        }
+
+        /* Daily Forecast */
+        .daily-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .daily-item {
+            display: grid;
+            grid-template-columns: 110px 140px 180px 1fr 130px;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 12px 18px;
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+
+        .daily-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 760px) {
+            .daily-item {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .daily-meta, .sun-times {
+                grid-column: span 2;
+            }
+        }
+
+        .daily-date {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .daily-condition {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .daily-emoji {
+            font-size: 1.3rem;
+        }
+
+        .daily-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .daily-temp {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .temp-min {
+            color: #38bdf8;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .temp-max {
+            color: #f87171;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .temp-bar-bg {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 999px;
+            overflow: hidden;
+            min-width: 40px;
+        }
+
+        .temp-bar-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #38bdf8, #f87171);
+            border-radius: 999px;
+        }
+
+        .daily-meta {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-pop {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+        }
+
+        .badge-precip {
+            background: rgba(129, 140, 248, 0.15);
+            color: #a5b4fc;
+        }
+
+        .badge-uv {
+            background: rgba(251, 146, 60, 0.15);
+            color: #fb923c;
+        }
+
+        .sun-times {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        /* Hourly */
+        .hourly-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: thin;
+        }
+
+        .hourly-item {
+            min-width: 72px;
+            flex: 0 0 auto;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            text-align: center;
+        }
+
+        .h-time {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .h-emoji {
+            font-size: 1.4rem;
+        }
+
+        .h-temp {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .h-pop {
+            font-size: 0.75rem;
+            color: #38bdf8;
+            min-height: 16px;
+        }
+
+        footer {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="loc-header">
+                <h1>📍 부산</h1>
+                <div class="loc-sub">부산, Busan, South Korea (위도: 35.10, 경도: 129.03) · Asia/Seoul</div>
+            </div>
+            <div class="time-badge">🕒 기준 시각: 2026년 08월 15일 14:39</div>
+        </header>
+
+        <!-- Weather Advice Card -->
+        <div class="card tips-card">
+            <div class="card-title">💡 맞춤형 날씨 안내 및 외출 팁</div>
+            <ul class="tips-list">
+                <li>☔ <strong>우산 지참 권장:</strong> 비 또는 강수 확률이 높아 외출 시 우산을 챙기세요.</li>
+            </ul>
+        </div>
+
+        <!-- Current Weather Hero Card -->
+        <div class="card">
+            <div class="card-title">🌤️ 현재 날씨 현황</div>
+            <div class="hero-grid">
+                <div class="current-main">
+                    <div class="temp-display">
+                        <div class="current-temp">27.0°C</div>
+                    </div>
+                    <div class="current-condition-badge">
+                        <span>☁️</span>
+                        <span>흐림</span>
+                    </div>
+                    <div class="feels-like">체감 온도: <strong>30.8°C</strong></div>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <span class="metric-label">💧 상대 습도</span>
+                        <span class="metric-val">75%</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="metric-label">💨 풍속 (풍향)</span>
+                        <span class="metric-val">8.7 km/h <small style="font-weight:normal; font-size:0.85rem">(97°)</small></span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="metric-label">🌧️ 현재 강수량</span>
+                        <span class="metric-val">0.0 mm</span>
+                    </div>
+                    <div class="metric-box">
+                        <span class="metric-label">⏱️ 현지 기압</span>
+                        <span class="metric-val">1005.0 hPa</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+        <div class="card aq-card">
+            <div class="card-title">🍃 대기질 현황 (Air Quality)</div>
+            <div class="aq-grid">
+                <div class="aq-item">
+                    <span class="aq-label">통합 대기질 (US AQI)</span>
+                    <span class="aq-value" style="color: #f59e0b;">56 (보통)</span>
+                </div>
+                <div class="aq-item">
+                    <span class="aq-label">초미세먼지 (PM2.5)</span>
+                    <span class="aq-value" style="color: #3b82f6;">16.5 µg/m³ (보통)</span>
+                </div>
+                <div class="aq-item">
+                    <span class="aq-label">미세먼지 (PM10)</span>
+                    <span class="aq-value" style="color: #10b981;">19.4 µg/m³ (좋음)</span>
+                </div>
+            </div>
+        </div>
+        
+
+        
+
+        
+        <div class="card">
+            <div class="card-title">📅 일별 일기예보 (3일간)</div>
+            <div class="daily-list">
+                
+            <div class="daily-item">
+                <div class="daily-date">2026-08-15</div>
+                <div class="daily-condition">
+                    <span class="daily-emoji">🌦️</span>
+                    <span class="daily-desc">약한 이슬비</span>
+                </div>
+                <div class="daily-temp">
+                    <span class="temp-min">25.1°</span>
+                    <div class="temp-bar-bg"><div class="temp-bar-fill"></div></div>
+                    <span class="temp-max">27.5°</span>
+                </div>
+                <div class="daily-meta">
+                    <span class="badge badge-pop">💧 51%</span>
+                    <span class="badge badge-precip">🌧️ 0.5mm</span>
+                    <span class="badge badge-uv">☀️ UV 6.25</span>
+                </div>
+                <div class="sun-times">🌅 05:43 · 🌇 19:13</div>
+            </div>
+            
+            <div class="daily-item">
+                <div class="daily-date">2026-08-16</div>
+                <div class="daily-condition">
+                    <span class="daily-emoji">🌧️</span>
+                    <span class="daily-desc">강한 비</span>
+                </div>
+                <div class="daily-temp">
+                    <span class="temp-min">23.5°</span>
+                    <div class="temp-bar-bg"><div class="temp-bar-fill"></div></div>
+                    <span class="temp-max">26.6°</span>
+                </div>
+                <div class="daily-meta">
+                    <span class="badge badge-pop">💧 100%</span>
+                    <span class="badge badge-precip">🌧️ 130.2mm</span>
+                    <span class="badge badge-uv">☀️ UV 0.4</span>
+                </div>
+                <div class="sun-times">🌅 05:44 · 🌇 19:12</div>
+            </div>
+            
+            <div class="daily-item">
+                <div class="daily-date">2026-08-17</div>
+                <div class="daily-condition">
+                    <span class="daily-emoji">🌧️</span>
+                    <span class="daily-desc">강한 비</span>
+                </div>
+                <div class="daily-temp">
+                    <span class="temp-min">26.4°</span>
+                    <div class="temp-bar-bg"><div class="temp-bar-fill"></div></div>
+                    <span class="temp-max">28.8°</span>
+                </div>
+                <div class="daily-meta">
+                    <span class="badge badge-pop">💧 98%</span>
+                    <span class="badge badge-precip">🌧️ 77.3mm</span>
+                    <span class="badge badge-uv">☀️ UV 5.7</span>
+                </div>
+                <div class="sun-times">🌅 05:45 · 🌇 19:11</div>
+            </div>
+            
+            </div>
+        </div>
+        
+
+        <footer>
+            데이터 출처: Open-Meteo API · Antigravity Weather Skill
+        </footer>
+    </div>
+</body>
+</html>

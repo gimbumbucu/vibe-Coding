@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>시장 진입 전략 & 신규 출점 상권 분석 솔루션 - Commercial Pulse Strategy</title>
+  <meta name="description" content="가맹본부와 예비 창업자를 위한 전국 277만 상가 빅데이터 기반 시장 진입 전략, 유망 상권 선정, 반경 입지 진단 및 경쟁 구도 분석 솔루션">
+
+  <!-- Google Fonts: Inter & Pretendard / Noto Sans KR -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <!-- Leaflet MarkerCluster CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Navigation Header -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="app-logo">
+          <div class="logo-icon">
+            <i class="fa-solid fa-chess-knight"></i>
+          </div>
+          <div class="logo-title-group">
+            <h1 class="logo-title">Commercial Strategy AI</h1>
+            <span class="logo-badge">시장 진입 전략 & 신규 출점 타당성 분석</span>
+          </div>
+        </div>
+
+        <nav class="nav-tabs" role="tablist">
+          <button class="nav-tab active" id="tabStrategy" data-tab="dashboard" role="tab">
+            <i class="fa-solid fa-crosshairs"></i>
+            <span>시장 진입 전략 분석</span>
+          </button>
+          <button class="nav-tab" id="tabGeocode" data-tab="geocoding" role="tab">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>주소 지오코딩</span>
+          </button>
+        </nav>
+      </div>
+
+      <div class="header-right">
+        <div class="data-status-badge">
+          <span class="pulse-dot"></span>
+          <span class="badge-text" id="liveStoreCountLabel">2,772,484개 상가 분석 중</span>
+        </div>
+        <button id="themeToggleBtn" class="header-icon-btn" title="다크/라이트 테마 전환">
+          <i class="fa-solid fa-sun" id="themeIcon"></i>
+        </button>
+        <button id="refreshDataBtn" class="header-icon-btn" title="데이터 새로고침">
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN VIEW: MARKET ENTRY STRATEGY SUITE -->
+    <main id="viewDashboard" class="view-panel active">
+      <!-- Target Industry & Region Strategy Filter Bar -->
+      <section class="strategy-filter-panel" aria-label="시장 진입 전략 필터">
+        <!-- Target Industry Selector Bar -->
+        <div class="target-industry-bar">
+          <span class="target-bar-label"><i class="fa-solid fa-bullseye"></i> 진입 목표 업종:</span>
+          <div class="industry-pills-list" id="industryPillsList">
+            <button class="industry-pill active" data-industry="cafe"><i class="fa-solid fa-mug-hot"></i> 커피/카페</button>
+            <button class="industry-pill" data-industry="korean_food"><i class="fa-solid fa-bowl-rice"></i> 한식/음식점</button>
+            <button class="industry-pill" data-industry="chicken_fastfood"><i class="fa-solid fa-drumstick-bite"></i> 치킨/패스트푸드</button>
+            <button class="industry-pill" data-industry="bakery_dessert"><i class="fa-solid fa-bread-slice"></i> 베이커리/디저트</button>
+            <button class="industry-pill" data-industry="convenience"><i class="fa-solid fa-store"></i> 편의점/H&B</button>
+            <button class="industry-pill" data-industry="beauty_hair"><i class="fa-solid fa-scissors"></i> 미용/뷰티</button>
+            <button class="industry-pill" data-industry="academy_education"><i class="fa-solid fa-graduation-cap"></i> 학원/교육</button>
+          </div>
+        </div>
+
+        <div class="filter-group-grid">
+          <!-- Sido Select -->
+          <div class="filter-item">
+            <label for="filterSido" class="filter-label"><i class="fa-solid fa-map"></i> 분석 대상 시/도</label>
+            <select id="filterSido" class="filter-select">
+              <option value="전체">전국 (전체)</option>
+            </select>
+          </div>
+
+          <!-- Sigungu Select -->
+          <div class="filter-item">
+            <label for="filterSigungu" class="filter-label"><i class="fa-solid fa-city"></i> 시/군/구</label>
+            <select id="filterSigungu" class="filter-select">
+              <option value="전체">전체 시군구</option>
+            </select>
+          </div>
+
+          <!-- Store Name / Keyword Search -->
+          <div class="filter-item filter-item-search">
+            <label for="filterKeyword" class="filter-label"><i class="fa-solid fa-magnifying-glass"></i> 경쟁 상호명 / 도로명 검색</label>
+            <div class="search-box-wrapper">
+              <input type="text" id="filterKeyword" class="filter-input" placeholder="예: 스타벅스, 올리브영, 메가커피..." autocomplete="off">
+              <button type="button" id="clearKeywordBtn" class="clear-search-btn" title="검색어 지우기" style="display: none;">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="filter-actions">
+            <button id="applyFilterBtn" class="btn-primary" title="전략 분석 실행">
+              <i class="fa-solid fa-chart-pie"></i> 전략 분석 실행
+            </button>
+            <button id="resetFilterBtn" class="btn-secondary" title="필터 초기화">
+              <i class="fa-solid fa-rotate-left"></i> 초기화
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Strategy KPI Metric Cards -->
+      <section class="kpi-grid" aria-label="시장 진입 핵심 전략 지표">
+        <!-- 1. Market Saturation Assessment -->
+        <div class="kpi-card card-glow-emerald" id="kpiCardSaturation">
+          <div class="kpi-icon-wrap bg-emerald">
+            <i class="fa-solid fa-gauge-high"></i>
+          </div>
+          <div class="kpi-info">
+            <span class="kpi-title">상권 포화도 진단</span>
+            <div class="kpi-value-row">
+              <span class="kpi-value text-emerald" id="kpiSaturationLevel">블루오션</span>
+            </div>
+            <span class="kpi-subtext" id="kpiSaturationSubtext">신규 진입 기회 우수</span>
+          </div>
+        </div>
+
+        <!-- 2. Top Promising Dong Recommendation -->
+        <div class="kpi-card card-glow-blue">
+          <div class="kpi-icon-wrap bg-blue">
+            <i class="fa-solid fa-trophy"></i>
+          </div>
+          <div class="kpi-info">
+            <span class="kpi-title">1위 추천 출점 유망지</span>
+            <div class="kpi-value-row">
+              <span class="kpi-value text-blue" id="kpiTopPromisingDong">-</span>
+            </div>
+            <span class="kpi-subtext" id="kpiTopPromisingScore">유망 점수 -점</span>
+          </div>
+        </div>
+
+        <!-- 3. Target Industry Market Scale -->
+        <div class="kpi-card card-glow-purple">
+          <div class="kpi-icon-wrap bg-purple">
+            <i class="fa-solid fa-shop"></i>
+          </div>
+          <div class="kpi-info">
+            <span class="kpi-title">해당 업종 점포수 / 비중</span>
+            <div class="kpi-value-row">
+              <span class="kpi-value" id="kpiTargetStoresCount">-</span>
+              <span class="kpi-unit">개</span>
+            </div>
+            <span class="kpi-subtext" id="kpiTargetStoresRatio">전체 상가의 -% 점유</span>
+          </div>
+        </div>
+
+        <!-- 4. Complementary Magnet Ecosystem -->
+        <div class="kpi-card card-glow-amber">
+          <div class="kpi-icon-wrap bg-amber">
+            <i class="fa-solid fa-building-user"></i>
+          </div>
+          <div class="kpi-info">
+            <span class="kpi-title">배후 집객 생태계 시설</span>
+            <div class="kpi-value-row">
+              <span class="kpi-value text-amber" id="kpiMagnetCount">-</span>
+              <span class="kpi-unit">개</span>
+            </div>
+            <span class="kpi-subtext" id="kpiMagnetSubtext">오피스 / 학원 / 병의원</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Spatial & Strategic Analysis Workspace -->
+      <section class="analytics-workspace">
+        <!-- Left: Spatial Map & Catchment Radius Assessment -->
+        <div class="map-section-card">
+          <div class="card-header map-header">
+            <div class="header-title-box">
+              <h2 class="section-title"><i class="fa-solid fa-map-location-dot"></i> 상권 공간 분포 & 후보지 반경 진단</h2>
+              <span class="map-badge" id="mapVisibleCountBadge">2,500개 표시 중</span>
+            </div>
+
+            <!-- Map Mode & Catchment Radius Controls -->
+            <div class="map-controls-toolbar">
+              <!-- Mode Selection -->
+              <div class="btn-toggle-group">
+                <button id="mapModeClusterBtn" class="toggle-btn active" title="마커 클러스터링 모드">
+                  <i class="fa-solid fa-circle-nodes"></i> 클러스터
+                </button>
+                <button id="mapModeHeatmapBtn" class="toggle-btn" title="밀집도 열지도 모드">
+                  <i class="fa-solid fa-fire"></i> 히트맵
+                </button>
+                <button id="mapModeRadiusBtn" class="toggle-btn toggle-highlight" title="지도 클릭 시 후보지 반경 분석 실행">
+                  <i class="fa-solid fa-crosshairs"></i> 🎯 후보지 진단
+                </button>
+              </div>
+
+              <!-- Radius Selector (Visible in Radius Mode) -->
+              <div class="radius-selector-group" id="radiusSelectorGroup" style="display: none;">
+                <span class="radius-label">반경:</span>
+                <button class="radius-chip" data-radius="300">300m</button>
+                <button class="radius-chip active" data-radius="500">500m</button>
+                <button class="radius-chip" data-radius="1000">1km</button>
+              </div>
+
+              <button id="syncBboxBtn" class="map-action-btn" title="현재 지도 화면(BBox) 내 상가 재조회">
+                <i class="fa-solid fa-expand"></i> <span>화면 동기화</span>
+              </button>
+
+              <button id="resetMapCenterBtn" class="map-action-btn icon-only" title="지도 위치 초기화">
+                <i class="fa-solid fa-rotate-left"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="map-wrapper">
+            <div id="dashboardMap" class="dashboard-map"></div>
+
+            <!-- Map Interactive Instruction Hint -->
+            <div id="radiusModeHint" class="map-mode-hint" style="display: none;">
+              <i class="fa-solid fa-hand-pointer pulse-anim"></i>
+              <span>지도의 후보지를 클릭하면 반경 내 <strong>경쟁점 수, 배후 유동 시설, 입지 점수</strong>를 실시간 진단합니다.</span>
+            </div>
+
+            <!-- Site Assessment Floating Card -->
+            <aside id="siteAssessmentCard" class="site-assessment-card" style="display: none;">
+              <div class="assessment-header">
+                <div class="assessment-title-wrap">
+                  <span class="assessment-badge" id="assessGradeBadge">S등급 최우수</span>
+                  <h3 class="assessment-title" id="assessAddressTitle">후보지 반경 500m 진단 리포트</h3>
+                </div>
+                <button id="closeAssessCardBtn" class="close-btn" title="닫기"><i class="fa-solid fa-xmark"></i></button>
+              </div>
+
+              <div class="assessment-body">
+                <div class="score-row">
+                  <div class="score-circle">
+                    <span class="score-num" id="assessScoreValue">88.5</span>
+                    <span class="score-max">/100점</span>
+                  </div>
+                  <div class="score-desc-box">
+                    <span class="score-desc-title">출점 적합도 종합 진단</span>
+                    <p class="score-desc-text" id="assessActionTip">배후 집객 시설이 매우 풍부하며 선점 효과를 기대할 수 있는 최우수 후보지입니다.</p>
+                  </div>
+                </div>
+
+                <div class="metrics-mini-grid">
+                  <div class="mini-metric">
+                    <span class="mini-label"><i class="fa-solid fa-store"></i> 반경 내 전체 상가</span>
+                    <span class="mini-val" id="assessTotalStores">-</span>
+                  </div>
+                  <div class="mini-metric">
+                    <span class="mini-label"><i class="fa-solid fa-skull-crossbones text-rose"></i> 동종 직접 경쟁점</span>
+                    <span class="mini-val text-rose" id="assessCompetitorCount">-</span>
+                  </div>
+                  <div class="mini-metric">
+                    <span class="mini-label"><i class="fa-solid fa-ruler-horizontal"></i> 최근접 경쟁점 거리</span>
+                    <span class="mini-val text-amber" id="assessNearestDist">-</span>
+                  </div>
+                  <div class="mini-metric">
+                    <span class="mini-label"><i class="fa-solid fa-briefcase text-blue"></i> 배후 오피스·기업</span>
+                    <span class="mini-val text-blue" id="assessOfficeCount">-</span>
+                  </div>
+                  <div class="mini-metric">
+                    <span class="mini-label"><i class="fa-solid fa-graduation-cap text-purple"></i> 학원·교육 시설</span>
+                    <span class="mini-val text-purple" id="assessEduCount">-</span>
+                  </div>
+                  <div class="mini-metric">
+                    <span class="mini-label"><i class="fa-solid fa-heart-pulse text-emerald"></i> 병의원·약국</span>
+                    <span class="mini-val text-emerald" id="assessHealthCount">-</span>
+                  </div>
+                </div>
+
+                <!-- Closest Competitors List -->
+                <div class="closest-competitors-section">
+                  <span class="competitors-title"><i class="fa-solid fa-triangle-exclamation"></i> 반경 내 인접 직접 경쟁점 (Top 5)</span>
+                  <ul class="competitors-list" id="assessCompetitorList">
+                    <li>경쟁점 데이터를 분석하는 중입니다...</li>
+                  </ul>
+                </div>
+              </div>
+            </aside>
+
+            <!-- Loading Overlay -->
+            <div id="mapLoadingOverlay" class="map-loading-overlay">
+              <div class="spinner"></div>
+              <span>상권 빅데이터를 분석하고 있습니다...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Strategic Insights & Top Promising Districts -->
+        <div class="charts-section-card">
+          <div class="card-header">
+            <div class="chart-tab-group">
+              <button class="chart-tab-btn active" data-chart-tab="opportunity">
+                <i class="fa-solid fa-ranking-star"></i> 유망 상권 발굴
+              </button>
+              <button class="chart-tab-btn" data-chart-tab="competition">
+                <i class="fa-solid fa-shield-halved"></i> 경쟁 브랜드 분석
+              </button>
+              <button class="chart-tab-btn" data-chart-tab="differentiation">
+                <i class="fa-solid fa-lightbulb"></i> 차별화 전략 제안
+              </button>
+            </div>
+          </div>
+
+          <div class="charts-body">
+            <!-- TAB 1: Promising Dongs Recommendation & Saturation Chart -->
+            <div id="chartTabOpportunity" class="chart-tab-content active">
+              <!-- Top 5 Promising Districts Recommendation Cards -->
+              <div class="promising-section">
+                <div class="section-sub-header">
+                  <h3 class="chart-title"><i class="fa-solid fa-award text-amber"></i> 신규 출점 추천 유망 상권 TOP 5</h3>
+                  <span class="chart-tag">상권 활성도 대비 경쟁도 저점</span>
+                </div>
+                <div class="promising-cards-container" id="promisingCardsContainer">
+                  <div class="promising-loading">유망 상권 분석 중...</div>
+                </div>
+              </div>
+
+              <!-- Dong-level Saturation Bar Chart -->
+              <div class="chart-box" style="flex: 1;">
+                <div class="chart-box-header">
+                  <h3 class="chart-title"><i class="fa-solid fa-chart-column"></i> 행정동별 목표 업종 점유율 & 출점 기회도</h3>
+                </div>
+                <div class="chart-canvas-container">
+                  <canvas id="dongOpportunityChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 2: Franchise Competition & Brand Radar -->
+            <div id="chartTabCompetition" class="chart-tab-content">
+              <div class="franchise-category-pills">
+                <button class="franchise-pill active" data-group="cafe">☕ 커피/카페</button>
+                <button class="franchise-pill" data-group="convenience">🏪 편의점/H&B</button>
+                <button class="franchise-pill" data-group="fastfood_chicken">🍗 치킨/패스트푸드</button>
+                <button class="franchise-pill" data-group="bakery_dessert">🥐 베이커리/디저트</button>
+              </div>
+
+              <div class="chart-box" style="flex: 1;">
+                <div class="chart-box-header">
+                  <h3 class="chart-title" id="franchiseChartTitle"><i class="fa-solid fa-tags"></i> 주요 브랜드 출점 수 비교</h3>
+                </div>
+                <div class="chart-canvas-container">
+                  <canvas id="franchiseBarChart"></canvas>
+                </div>
+              </div>
+
+              <div class="chart-box">
+                <div class="chart-box-header">
+                  <h3 class="chart-title"><i class="fa-solid fa-chart-pie"></i> 전체 상권 내 대분류 산업 구성비</h3>
+                </div>
+                <div class="chart-canvas-container doughnut-container">
+                  <canvas id="doughnutCategoryChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: Differentiation Strategy & Ecosystem Guide -->
+            <div id="chartTabDifferentiation" class="chart-tab-content">
+              <div class="differentiation-guide-card" id="differentiationGuideCard">
+                <div class="guide-header">
+                  <i class="fa-solid fa-sparkles text-amber"></i>
+                  <h4>상권 생태계 맞춤형 차별화 서비스 제안</h4>
+                </div>
+                <div class="guide-content" id="differentiationContent">
+                  <!-- Injected via JavaScript based on regional statistics -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Bottom Data Table Section -->
+      <section class="table-section-card">
+        <div class="card-header table-header">
+          <div class="header-title-box">
+            <h2 class="section-title"><i class="fa-solid fa-list-check"></i> 상가 상세 목록 및 경쟁점 탐색</h2>
+            <span class="table-counter" id="tableTotalCount">총 0개 점포</span>
+          </div>
+          <div class="table-actions">
+            <span class="page-indicator" id="pageIndicator">1 / 1 페이지</span>
+            <button id="prevPageBtn" class="btn-page" disabled><i class="fa-solid fa-chevron-left"></i> 이전</button>
+            <button id="nextPageBtn" class="btn-page" disabled>다음 <i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="store-data-table">
+            <thead>
+              <tr>
+                <th>상호명</th>
+                <th>업종 대분류</th>
+                <th>업종 중분류</th>
+                <th>업종 소분류</th>
+                <th>시/도</th>
+                <th>시/군/구</th>
+                <th>행정동</th>
+                <th>도로명 주소</th>
+                <th class="text-center">위치</th>
+              </tr>
+            </thead>
+            <tbody id="storeTableBody">
+              <tr>
+                <td colspan="9" class="text-center empty-cell">데이터를 불러오는 중입니다...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <!-- GEOCODING TAB -->
+    <main id="viewGeocode" class="view-panel">
+      <div class="geocode-layout">
+        <div id="geocodeMap" class="geocode-map"></div>
+        <aside class="geocode-side-drawer">
+          <div class="drawer-header">
+            <h2 class="drawer-title"><i class="fa-solid fa-location-dot"></i> 주소 위경도 검색</h2>
+          </div>
+          <div class="drawer-body">
+            <form id="geocodeSearchForm" class="geocode-form" onsubmit="return false;">
+              <div class="search-input-wrapper">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" id="geocodeAddressInput" class="search-input" placeholder="도로명 또는 지번 주소 입력...">
+                <button type="submit" id="geocodeSubmitBtn" class="search-submit-btn">검색</button>
+              </div>
+            </form>
+
+            <div id="geocodeResultCard" class="card location-card" style="display: none; margin-top: 16px;">
+              <h3 id="geocodeDisplayAddress" class="main-address">-</h3>
+              <div class="coords-box">
+                <div class="coord-item">
+                  <span class="coord-label">위도</span>
+                  <span id="geocodeLatValue" class="coord-value">-</span>
+                </div>
+                <div class="coord-item">
+                  <span class="coord-label">경도</span>
+                  <span id="geocodeLonValue" class="coord-value">-</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <!-- External JS Libraries -->
+  <!-- Chart.js 4.4 -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Leaflet 1.9 -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <!-- Leaflet MarkerCluster -->
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <!-- Leaflet Heat -->
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>

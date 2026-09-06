@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>엔비디아 (NVIDIA Corporation) (NVDA) - 주가 분석 보고서</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --bg-card: #131b2e;
+      --bg-card-hover: #1b2640;
+      --bg-card-subtle: #0f1626;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(59, 130, 246, 0.4);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+      --accent-blue: #3b82f6;
+      --accent-purple: #8b5cf6;
+      --accent-cyan: #06b6d4;
+      --bullish: #10b981;
+      --bullish-bg: rgba(16, 185, 129, 0.12);
+      --bearish: #ef4444;
+      --bearish-bg: rgba(239, 68, 68, 0.12);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.45);
+      --font-main: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.6;
+      padding: 28px 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+    }
+
+    /* Header styling */
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      padding: 26px 32px;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.95));
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .badge-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-ticker {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--accent-blue);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      font-family: var(--font-mono);
+    }
+
+    .badge-sector {
+      background: rgba(139, 92, 246, 0.15);
+      color: var(--accent-purple);
+      border: 1px solid rgba(139, 92, 246, 0.3);
+    }
+
+    .badge-exchange {
+      background: rgba(156, 163, 175, 0.1);
+      color: var(--text-muted);
+    }
+
+    .company-title {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+    }
+
+    .header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+
+    .current-price {
+      font-family: var(--font-mono);
+      font-size: 2.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .change-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+    }
+
+    .change-tag.bullish {
+      background: var(--bullish-bg);
+      color: var(--bullish);
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
+
+    .change-tag.bearish {
+      background: var(--bearish-bg);
+      color: var(--bearish);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+    }
+
+    .change-tag.neutral {
+      background: rgba(156, 163, 175, 0.1);
+      color: var(--text-muted);
+    }
+
+    .meta-time {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-accent);
+      background-color: var(--bg-card-hover);
+    }
+
+    .kpi-label {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .kpi-value {
+      font-size: 1.35rem;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: #ffffff;
+    }
+
+    .kpi-subtext {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    /* Range Progress Bar */
+    .range-bar-wrapper {
+      margin-top: 6px;
+    }
+
+    .range-bar-track {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .range-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+      border-radius: 999px;
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      margin-top: 4px;
+    }
+
+    /* Main Chart Card */
+    .chart-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .chart-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      gap: 12px;
+    }
+
+    .chart-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #ffffff;
+    }
+
+    .chart-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-toggle {
+      background: var(--bg-card-subtle);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-toggle:hover {
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-toggle.active {
+      background: var(--accent-blue);
+      color: #ffffff;
+      border-color: var(--accent-blue);
+    }
+
+    .chart-canvas-container {
+      position: relative;
+      width: 100%;
+      height: 380px;
+    }
+
+    .volume-canvas-container {
+      position: relative;
+      width: 100%;
+      height: 110px;
+      margin-top: 14px;
+    }
+
+    /* Multi-stock comparative section */
+    .compare-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 28px;
+      margin-bottom: 24px;
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+
+    .compare-table th {
+      text-align: left;
+      padding: 14px 12px;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .compare-table td {
+      padding: 16px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      font-size: 0.92rem;
+    }
+
+    /* Two-column details grid */
+    .details-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 18px;
+      }
+      .header-right {
+        align-items: flex-start;
+      }
+    }
+
+    .panel-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      padding: 28px;
+    }
+
+    .panel-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 14px;
+    }
+
+    .metric-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .metric-table tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .metric-table tr:last-child {
+      border-bottom: none;
+    }
+
+    .metric-table td {
+      padding: 11px 4px;
+      font-size: 0.9rem;
+    }
+
+    .metric-table td.label {
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .metric-table td.val {
+      text-align: right;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    /* Target Price Gauge */
+    .target-gauge-box {
+      background: var(--bg-card-subtle);
+      border-radius: 14px;
+      padding: 18px;
+      margin-top: 18px;
+      border: 1px solid var(--border-color);
+    }
+
+    .target-gauge-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .consensus-badge {
+      padding: 4px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+    }
+
+    .consensus-buy {
+      background: var(--bullish-bg);
+      color: var(--bullish);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .consensus-hold {
+      background: rgba(245, 158, 11, 0.15);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .consensus-sell {
+      background: var(--bearish-bg);
+      color: var(--bearish);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .company-summary-text {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+      max-height: 250px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 28px;
+      color: var(--text-dim);
+      font-size: 0.82rem;
+      border-top: 1px solid var(--border-color);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Top Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="badge-row">
+          <span class="badge badge-ticker">NVDA</span>
+          <span class="badge badge-sector">Technology</span>
+          <span class="badge badge-exchange">NMS</span>
+        </div>
+        <h1 class="company-title">엔비디아 (NVIDIA Corporation)</h1>
+        <div style="color: var(--text-muted); font-size: 0.92rem;">Semiconductors • United States</div>
+      </div>
+      <div class="header-right">
+        <div class="current-price">$225.16</div>
+        <div class="change-tag bearish">
+          <span>▼</span>
+          <span>$0.14</span>
+          <span>(-0.06%)</span>
+        </div>
+        <div class="meta-time">기준일시: 2026-08-15 14:48:59 (3MO 차트)</div>
+      </div>
+    </header>
+
+    <!-- Key Performance Indicators Grid -->
+    <section class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>시가총액</span>
+          <span>🏢</span>
+        </div>
+        <div class="kpi-value">$5.45T</div>
+        <div class="kpi-subtext">Market Capitalization</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>PER (TTM) / PBR</span>
+          <span>📊</span>
+        </div>
+        <div class="kpi-value">34.5배</div>
+        <div class="kpi-subtext">PBR: 27.90배 | Fwd PER: 17.6배</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>52주 최고/최저</span>
+          <span>📈</span>
+        </div>
+        <div class="kpi-value" style="font-size: 1.08rem;">
+          $164.07 - $236.54
+        </div>
+        <div class="range-bar-wrapper">
+          <div class="range-bar-track">
+            <div class="range-bar-fill" style="width: 84.3%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>목표주가 (평균)</span>
+          <span>🎯</span>
+        </div>
+        <div class="kpi-value" style="color: var(--accent-cyan);">
+          $302.83
+        </div>
+        <div class="kpi-subtext">
+          애널리스트 58명 의견
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">
+          <span>배당수익률 (Dividend)</span>
+          <span>💰</span>
+        </div>
+        <div class="kpi-value">
+          0.44%
+        </div>
+        <div class="kpi-subtext">Beta: 2.21</div>
+      </div>
+    </section>
+
+    <!-- Main Interactive Chart -->
+    <section class="chart-card">
+      <div class="chart-header">
+        <div class="chart-title">
+          <span>📉 엔비디아 (NVIDIA Corporation) 주가 변동 추이 (3MO)</span>
+        </div>
+        <div class="chart-actions">
+          <button class="btn-toggle active" id="btnLine">라인 차트</button>
+          <button class="btn-toggle" id="btnSma">20일 이동평균 (SMA)</button>
+        </div>
+      </div>
+      <div class="chart-canvas-container">
+        <canvas id="stockPriceChart"></canvas>
+      </div>
+      <div class="volume-canvas-container">
+        <canvas id="volumeChart"></canvas>
+      </div>
+    </section>
+
+    <!-- Multi-stock comparison (if applicable) -->
+    
+    <section class="compare-section">
+      <h2 class="panel-title">⚖️ 종목 비교 분석</h2>
+      <div style="margin-bottom: 20px;">
+        <canvas id="multiCompareChart" style="max-height: 320px; width: 100%;"></canvas>
+      </div>
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>종목명 (티커)</th>
+            <th>현재가</th>
+            <th>전일 대비</th>
+            <th>기간 등락률 (3MO)</th>
+            <th>시가총액</th>
+            <th>PER</th>
+            <th>PBR</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+          <tr>
+            <td><strong>엔비디아 (NVIDIA Corporation)</strong> <span style="color:var(--text-muted); font-size:0.82rem;">(NVDA)</span></td>
+            <td style="font-family:var(--font-mono); font-weight:600;">$225.16</td>
+            <td class="bearish" style="font-family:var(--font-mono);">
+              -0.06%
+            </td>
+            <td class="bullish" style="font-family:var(--font-mono); font-weight:700;">
+              +0.05%
+            </td>
+            <td style="font-family:var(--font-mono);">$5.45T</td>
+            <td style="font-family:var(--font-mono);">34.5배</td>
+            <td style="font-family:var(--font-mono);">27.90배</td>
+          </tr>
+          
+          <tr>
+            <td><strong>애플 (Apple Inc.)</strong> <span style="color:var(--text-muted); font-size:0.82rem;">(AAPL)</span></td>
+            <td style="font-family:var(--font-mono); font-weight:600;">$305.93</td>
+            <td class="bullish" style="font-family:var(--font-mono);">
+              +0.22%
+            </td>
+            <td class="bullish" style="font-family:var(--font-mono); font-weight:700;">
+              +1.99%
+            </td>
+            <td style="font-family:var(--font-mono);">$4.46T</td>
+            <td style="font-family:var(--font-mono);">35.0배</td>
+            <td style="font-family:var(--font-mono);">41.57배</td>
+          </tr>
+          
+          <tr>
+            <td><strong>삼성전자 (SamsungElec)</strong> <span style="color:var(--text-muted); font-size:0.82rem;">(005930.KS)</span></td>
+            <td style="font-family:var(--font-mono); font-weight:600;">274,500원</td>
+            <td class="bullish" style="font-family:var(--font-mono);">
+              +2.43%
+            </td>
+            <td class="bearish" style="font-family:var(--font-mono); font-weight:700;">
+              -7.16%
+            </td>
+            <td style="font-family:var(--font-mono);">1802.52조 원</td>
+            <td style="font-family:var(--font-mono);">N/A배</td>
+            <td style="font-family:var(--font-mono);">N/A배</td>
+          </tr>
+          
+        </tbody>
+      </table>
+    </section>
+    
+
+    <!-- Detailed Valuation & Company Profile Grid -->
+    <div class="details-grid">
+      <!-- Valuation & Financial Metrics -->
+      <section class="panel-card">
+        <h2 class="panel-title">📋 주요 펀더멘털 & 지표</h2>
+        <table class="metric-table">
+          <tr>
+            <td class="label">시가 (Open)</td>
+            <td class="val">$226.80</td>
+          </tr>
+          <tr>
+            <td class="label">전일 종가 (Prev Close)</td>
+            <td class="val">$225.30</td>
+          </tr>
+          <tr>
+            <td class="label">일중 변동폭 (Day Range)</td>
+            <td class="val">$224.50 - $227.49</td>
+          </tr>
+          <tr>
+            <td class="label">거래량 (Volume)</td>
+            <td class="val">75,161,211</td>
+          </tr>
+          <tr>
+            <td class="label">평균 거래량 (Avg Volume)</td>
+            <td class="val">147,132,739</td>
+          </tr>
+          <tr>
+            <td class="label">주당순이익 (EPS / Fwd EPS)</td>
+            <td class="val">$6.53 / $12.82</td>
+          </tr>
+          <tr>
+            <td class="label">50일 이동평균선 (50D MA)</td>
+            <td class="val">$206.52</td>
+          </tr>
+          <tr>
+            <td class="label">200일 이동평균선 (200D MA)</td>
+            <td class="val">$194.92</td>
+          </tr>
+        </table>
+
+        <!-- Analyst Gauge -->
+        <div class="target-gauge-box">
+          <div class="target-gauge-header">
+            <span style="font-weight:600; font-size:0.9rem;">애널리스트 투자의견</span>
+            <span class="consensus-badge consensus-buy">
+              강력 매수 (Strong Buy)
+            </span>
+          </div>
+          <div class="range-labels">
+            <span>최저: $180.00</span>
+            <span>평균: $302.83</span>
+            <span>최고: $500.00</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Company Profile -->
+      <section class="panel-card">
+        <h2 class="panel-title">🏢 기업 개요 및 비즈니스</h2>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div>
+            <strong style="color:#ffffff;">웹사이트:</strong> 
+            <a href="https://www.nvidia.com" target="_blank" style="color:var(--accent-blue); text-decoration:none;">https://www.nvidia.com</a>
+          </div>
+          <div>
+            <strong style="color:#ffffff;">임직원 수:</strong> 42,000명
+          </div>
+          <div>
+            <strong style="color:#ffffff;">사업 요약:</strong>
+            <p class="company-summary-text" style="margin-top: 8px;">
+              NVIDIA Corporation operates as a data center scale AI infrastructure company in the United States, Taiwan, China, Hong Kong, Europe, and internationally. It operates through Compute & Networking, and Graphics segments. The Compute & Networking segment provides data center accelerated computing and networking platforms and artificial intelligence solutions and software, and automotive platforms and autonomous and electric vehicle solutions, including software. The Graphics segment offers GeForce GPUs for gaming and PCs; Quadro/NVIDIA RTX GPUs for enterprise workstation graphics. The company's products are used in gaming, professional visualization, data center, and automotive markets. It sells its products to original equipment manufacturers, original device manufacturers, system integrators and distributors, independent software vendors, cloud service providers, add-in board manufacturers, distributors, automotive manufacturers and tier-1 automotive suppliers, and other ecosystem participants. NVIDIA Corporation was incorporated in 1993 and is headquartered in Santa Clara, California.
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      Generated automatically by Antigravity Stock Skill (powered by yfinance) • 2026-08-15 14:48:59
+    </footer>
+
+  </div>
+
+  <!-- Chart.js Script Logic -->
+  <script>
+    const stockData = [{"symbol": "NVDA", "query_name": "엔비디아", "display_title": "엔비디아 (NVIDIA Corporation)", "short_name": "NVIDIA Corporation", "long_name": "NVIDIA Corporation", "currency": "USD", "exchange": "NMS", "current_price": 225.16, "previous_close": 225.3, "price_change": -0.14000000000001478, "pct_change": -0.06213936972925645, "period": "3mo", "interval": "1d", "period_change": 0.102294921875, "period_pct_change": 0.04545275185089111, "period_high": 232.00958636747916, "period_low": 189.8000030517578, "fundamentals": {"market_cap": 5453600260096, "market_cap_fmt": "$5.45T", "pe_ratio": 34.480858, "forward_pe": 17.567993, "pbr": 27.90087, "eps": 6.53, "forward_eps": 12.81649, "beta": 2.215, "dividend_yield": 0.44, "fifty_two_week_high": 236.54, "fifty_two_week_low": 164.07, "fifty_day_avg": 206.5196, "two_hundred_day_avg": 194.91975, "volume": 75161211, "avg_volume": 147132739, "day_high": 227.49, "day_low": 224.5, "open": 226.8}, "analyst": {"target_mean": 302.82758, "target_high": 500.0, "target_low": 180.0, "recommendation": "strong_buy", "opinions_count": 58}, "profile": {"short_name": "NVIDIA Corporation", "long_name": "NVIDIA Corporation", "display_title": "엔비디아 (NVIDIA Corporation)", "sector": "Technology", "industry": "Semiconductors", "country": "United States", "website": "https://www.nvidia.com", "summary": "NVIDIA Corporation operates as a data center scale AI infrastructure company in the United States, Taiwan, China, Hong Kong, Europe, and internationally. It operates through Compute & Networking, and Graphics segments. The Compute & Networking segment provides data center accelerated computing and networking platforms and artificial intelligence solutions and software, and automotive platforms and autonomous and electric vehicle solutions, including software. The Graphics segment offers GeForce GPUs for gaming and PCs; Quadro/NVIDIA RTX GPUs for enterprise workstation graphics. The company's products are used in gaming, professional visualization, data center, and automotive markets. It sells its products to original equipment manufacturers, original device manufacturers, system integrators and distributors, independent software vendors, cloud service providers, add-in board manufacturers, distributors, automotive manufacturers and tier-1 automotive suppliers, and other ecosystem participants. NVIDIA Corporation was incorporated in 1993 and is headquartered in Santa Clara, California.", "employees": 42000}, "history": [{"date": "2026-05-15", "open": 229.49, "high": 231.23, "low": 223.98, "close": 225.06, "volume": 180977600}, {"date": "2026-05-18", "open": 229.6, "high": 229.73, "low": 218.12, "close": 222.06, "volume": 146280900}, {"date": "2026-05-19", "open": 219.36, "high": 224.22, "low": 217.66, "close": 220.35, "volume": 140948200}, {"date": "2026-05-20", "open": 222.92, "high": 225.87, "low": 220.24, "close": 223.21, "volume": 184201600}, {"date": "2026-05-21", "open": 222.03, "high": 227.14, "low": 217.68, "close": 219.25, "volume": 203381800}, {"date": "2026-05-22", "open": 220.64, "high": 220.75, "low": 214.55, "close": 215.08, "volume": 169275700}, {"date": "2026-05-26", "open": 216.29, "high": 217.93, "low": 211.75, "close": 214.61, "volume": 187202600}, {"date": "2026-05-27", "open": 213.87, "high": 213.9, "low": 208.54, "close": 212.35, "volume": 167601200}, {"date": "2026-05-28", "open": 211.03, "high": 215.27, "low": 210.97, "close": 214.0, "volume": 143996000}, {"date": "2026-05-29", "open": 214.33, "high": 217.61, "low": 210.88, "close": 210.89, "volume": 289410600}, {"date": "2026-06-01", "open": 215.48, "high": 224.61, "low": 215.45, "close": 224.1, "volume": 212850700}, {"date": "2026-06-02", "open": 226.92, "high": 232.01, "low": 221.09, "close": 222.56, "volume": 193362900}, {"date": "2026-06-03", "open": 221.46, "high": 222.56, "low": 214.26, "close": 214.5, "volume": 160907000}, {"date": "2026-06-04", "open": 213.91, "high": 221.6, "low": 210.97, "close": 218.66, "volume": 169022200}, {"date": "2026-06-05", "open": 214.53, "high": 214.87, "low": 204.33, "close": 205.1, "volume": 219655500}, {"date": "2026-06-08", "open": 210.18, "high": 210.47, "low": 206.0, "close": 208.64, "volume": 138372800}, {"date": "2026-06-09", "open": 210.62, "high": 211.4, "low": 199.34, "close": 208.19, "volume": 180962500}, {"date": "2026-06-10", "open": 204.43, "high": 207.22, "low": 199.92, "close": 200.42, "volume": 161746600}, {"date": "2026-06-11", "open": 201.49, "high": 205.66, "low": 199.54, "close": 204.87, "volume": 158643200}, {"date": "2026-06-12", "open": 204.86, "high": 207.07, "low": 203.44, "close": 205.19, "volume": 112001800}, {"date": "2026-06-15", "open": 208.92, "high": 212.71, "low": 208.34, "close": 212.45, "volume": 149936700}, {"date": "2026-06-16", "open": 211.18, "high": 211.49, "low": 207.29, "close": 207.41, "volume": 125694100}, {"date": "2026-06-17", "open": 208.53, "high": 209.21, "low": 203.08, "close": 204.65, "volume": 128363500}, {"date": "2026-06-18", "open": 207.33, "high": 211.39, "low": 206.5, "close": 210.69, "volume": 241272000}, {"date": "2026-06-22", "open": 211.44, "high": 213.99, "low": 207.72, "close": 208.65, "volume": 122041400}, {"date": "2026-06-23", "open": 202.17, "high": 203.77, "low": 200.0, "close": 200.04, "volume": 153496200}, {"date": "2026-06-24", "open": 200.12, "high": 201.67, "low": 196.58, "close": 199.0, "volume": 151810700}, {"date": "2026-06-25", "open": 200.08, "high": 200.8, "low": 192.13, "close": 195.74, "volume": 149550000}, {"date": "2026-06-26", "open": 193.12, "high": 195.55, "low": 191.22, "close": 192.53, "volume": 179304100}, {"date": "2026-06-29", "open": 193.85, "high": 196.18, "low": 189.8, "close": 194.97, "volume": 148835700}, {"date": "2026-06-30", "open": 197.24, "high": 200.63, "low": 195.11, "close": 200.09, "volume": 166476700}, {"date": "2026-07-01", "open": 196.2, "high": 199.85, "low": 193.45, "close": 197.58, "volume": 146147600}, {"date": "2026-07-02", "open": 197.14, "high": 200.06, "low": 192.35, "close": 194.83, "volume": 142068700}, {"date": "2026-07-06", "open": 194.42, "high": 197.55, "low": 193.99, "close": 195.55, "volume": 108999000}, {"date": "2026-07-07", "open": 192.37, "high": 198.41, "low": 191.14, "close": 196.93, "volume": 124154600}, {"date": "2026-07-08", "open": 195.18, "high": 205.16, "low": 195.06, "close": 204.12, "volume": 147419100}, {"date": "2026-07-09", "open": 204.46, "high": 204.59, "low": 198.96, "close": 202.78, "volume": 132037400}, {"date": "2026-07-10", "open": 202.0, "high": 211.0, "low": 201.92, "close": 210.96, "volume": 148421000}, {"date": "2026-07-13", "open": 208.54, "high": 210.57, "low": 203.0, "close": 203.53, "volume": 121411000}, {"date": "2026-07-14", "open": 208.2, "high": 212.55, "low": 203.8, "close": 211.8, "volume": 124379600}, {"date": "2026-07-15", "open": 211.96, "high": 213.81, "low": 206.04, "close": 212.5, "volume": 124797200}, {"date": "2026-07-16", "open": 210.17, "high": 211.08, "low": 205.85, "close": 207.4, "volume": 122986100}, {"date": "2026-07-17", "open": 202.64, "high": 206.65, "low": 197.97, "close": 202.81, "volume": 144281900}, {"date": "2026-07-20", "open": 205.87, "high": 207.74, "low": 202.28, "close": 203.28, "volume": 88701500}, {"date": "2026-07-21", "open": 207.54, "high": 208.65, "low": 204.01, "close": 207.29, "volume": 108685600}, {"date": "2026-07-22", "open": 205.81, "high": 214.39, "low": 204.95, "close": 212.06, "volume": 137645600}, {"date": "2026-07-23", "open": 209.46, "high": 210.87, "low": 205.96, "close": 208.76, "volume": 110505300}, {"date": "2026-07-24", "open": 207.45, "high": 211.91, "low": 204.81, "close": 206.84, "volume": 114836800}, {"date": "2026-07-27", "open": 208.2, "high": 208.75, "low": 195.44, "close": 196.51, "volume": 154353700}, {"date": "2026-07-28", "open": 195.0, "high": 198.7, "low": 192.74, "close": 197.01, "volume": 134111500}, {"date": "2026-07-29", "open": 195.85, "high": 197.07, "low": 190.01, "close": 190.01, "volume": 147680800}, {"date": "2026-07-30", "open": 193.45, "high": 197.25, "low": 191.52, "close": 195.04, "volume": 129010200}, {"date": "2026-07-31", "open": 198.44, "high": 202.0, "low": 194.95, "close": 200.75, "volume": 139961200}, {"date": "2026-08-03", "open": 197.69, "high": 208.74, "low": 196.85, "close": 206.64, "volume": 128406900}, {"date": "2026-08-04", "open": 211.3, "high": 213.06, "low": 209.05, "close": 211.94, "volume": 134922000}, {"date": "2026-08-05", "open": 216.86, "high": 222.22, "low": 216.4, "close": 219.22, "volume": 158187400}, {"date": "2026-08-06", "open": 221.53, "high": 223.63, "low": 217.0, "close": 218.99, "volume": 113940600}, {"date": "2026-08-07", "open": 221.54, "high": 224.76, "low": 220.66, "close": 223.96, "volume": 105669400}, {"date": "2026-08-10", "open": 223.4, "high": 224.14, "low": 216.77, "close": 217.55, "volume": 115846600}, {"date": "2026-08-11", "open": 222.17, "high": 222.2, "low": 216.2, "close": 217.5, "volume": 101273100}, {"date": "2026-08-12", "open": 221.04, "high": 225.1, "low": 220.2, "close": 224.09, "volume": 108783600}, {"date": "2026-08-13", "open": 225.06, "high": 227.23, "low": 223.71, "close": 225.3, "volume": 98867200}, {"date": "2026-08-14", "open": 226.77, "high": 227.49, "low": 224.5, "close": 225.16, "volume": 75504000}], "fetched_at": "2026-08-15 14:48:59"}, {"symbol": "AAPL", "query_name": "애플", "display_title": "애플 (Apple Inc.)", "short_name": "Apple Inc.", "long_name": "Apple Inc.", "currency": "USD", "exchange": "NMS", "current_price": 305.93, "previous_close": 305.26, "price_change": 0.6700000000000159, "pct_change": 0.21948502915547924, "period": "3mo", "interval": "1d", "period_change": 5.95867919921875, "period_pct_change": 1.9864163443363114, "period_high": 344.2730974331505, "period_low": 273.5141152813601, "fundamentals": {"market_cap": 4464797286400, "market_cap_fmt": "$4.46T", "pe_ratio": 34.96343, "forward_pe": 32.17704, "pbr": 41.566574, "eps": 8.73, "forward_eps": 9.50771, "beta": 1.086, "dividend_yield": 0.35, "fifty_two_week_high": 344.57, "fifty_two_week_low": 223.78, "fifty_day_avg": 309.1908, "two_hundred_day_avg": 280.48364, "volume": 26072932, "avg_volume": 56650275, "day_high": 307.49, "day_low": 304.31, "open": 306.028}, "analyst": {"target_mean": 322.2844, "target_high": 400.0, "target_low": 215.0, "recommendation": "buy", "opinions_count": 41}, "profile": {"short_name": "Apple Inc.", "long_name": "Apple Inc.", "display_title": "애플 (Apple Inc.)", "sector": "Technology", "industry": "Consumer Electronics", "country": "United States", "website": "https://www.apple.com", "summary": "Apple Inc. designs, manufactures, and markets smartphones, personal computers, tablets, wearables, and accessories worldwide. The company offers iPhone, a line of smartphones; Mac, a line of personal computers; iPad, a line of multi-purpose tablets; and wearables, home, and accessories comprising AirPods, Apple Vision Pro, Apple TV, Apple Watch, Beats products, and HomePod, as well as Apple branded and third-party accessories. It also provides AppleCare support and cloud services; and operates various platforms, including the App Store that allows customers to discover and download applications and digital content, such as books, music, video, games, and podcasts, as well as advertising services include third-party licensing arrangements and its own advertising platforms. In addition, the company offers various subscription-based services, such as Apple Arcade, a game subscription service; Apple Fitness+, a personalized fitness service; Apple Music, which offers users a curated listening experience with on-demand radio stations; Apple News+, a subscription news and magazine service; Apple TV, which offers original content and live sports; Apple Card, a co-branded credit card; and Apple Pay, a cashless payment service, as well as licenses its intellectual property. The company serves consumers, and small and mid-sized businesses; and the education, enterprise, and government markets. It distributes third-party applications for its products through the App Store. The company also sells its products through its retail and online stores, and direct sales force; and third-party cellular network carriers and resellers. The company was formerly known as Apple Computer, Inc. and changed its name to Apple Inc. in January 2007. Apple Inc. was founded in 1976 and is headquartered in Cupertino, California.", "employees": 150000}, "history": [{"date": "2026-05-15", "open": 297.64, "high": 302.94, "low": 296.26, "close": 299.97, "volume": 54862800}, {"date": "2026-05-18", "open": 299.98, "high": 300.4, "low": 294.66, "close": 297.58, "volume": 34483000}, {"date": "2026-05-19", "open": 296.71, "high": 300.25, "low": 296.09, "close": 298.71, "volume": 42243600}, {"date": "2026-05-20", "open": 297.92, "high": 302.54, "low": 297.82, "close": 301.99, "volume": 38229800}, {"date": "2026-05-21", "open": 300.8, "high": 305.28, "low": 300.14, "close": 304.73, "volume": 42965100}, {"date": "2026-05-22", "open": 305.86, "high": 311.13, "low": 305.58, "close": 308.55, "volume": 43670200}, {"date": "2026-05-26", "open": 309.29, "high": 311.55, "low": 307.4, "close": 308.06, "volume": 48000500}, {"date": "2026-05-27", "open": 308.06, "high": 312.99, "low": 308.03, "close": 310.58, "volume": 50430900}, {"date": "2026-05-28", "open": 310.41, "high": 312.53, "low": 309.3, "close": 312.24, "volume": 48220400}, {"date": "2026-05-29", "open": 311.51, "high": 314.73, "low": 309.26, "close": 311.79, "volume": 70026800}, {"date": "2026-06-01", "open": 309.36, "high": 310.67, "low": 304.76, "close": 306.05, "volume": 48849900}, {"date": "2026-06-02", "open": 307.2, "high": 315.18, "low": 306.43, "close": 314.93, "volume": 44534700}, {"date": "2026-06-03", "open": 313.91, "high": 316.67, "low": 308.58, "close": 309.99, "volume": 50836700}, {"date": "2026-06-04", "open": 312.96, "high": 313.27, "low": 309.38, "close": 310.96, "volume": 44869100}, {"date": "2026-06-05", "open": 312.59, "high": 314.9, "low": 306.89, "close": 307.08, "volume": 65310500}, {"date": "2026-06-08", "open": 308.47, "high": 317.13, "low": 300.91, "close": 301.28, "volume": 77949100}, {"date": "2026-06-09", "open": 300.02, "high": 300.49, "low": 287.53, "close": 290.3, "volume": 70108800}, {"date": "2026-06-10", "open": 290.49, "high": 294.5, "low": 287.13, "close": 291.33, "volume": 52793300}, {"date": "2026-06-11", "open": 293.47, "high": 296.74, "low": 289.34, "close": 295.38, "volume": 42572500}, {"date": "2026-06-12", "open": 295.77, "high": 296.88, "low": 289.37, "close": 290.88, "volume": 38742100}, {"date": "2026-06-15", "open": 293.87, "high": 297.52, "low": 291.45, "close": 296.16, "volume": 45732600}, {"date": "2026-06-16", "open": 295.0, "high": 300.22, "low": 293.72, "close": 298.98, "volume": 39874400}, {"date": "2026-06-17", "open": 300.59, "high": 301.81, "low": 294.11, "close": 295.69, "volume": 42745100}, {"date": "2026-06-18", "open": 297.85, "high": 300.31, "low": 295.37, "close": 297.75, "volume": 85962200}, {"date": "2026-06-22", "open": 297.05, "high": 302.16, "low": 296.5, "close": 296.75, "volume": 44879900}, {"date": "2026-06-23", "open": 297.28, "high": 301.38, "low": 293.93, "close": 294.05, "volume": 52010900}, {"date": "2026-06-24", "open": 295.11, "high": 299.44, "low": 292.69, "close": 292.83, "volume": 53081900}, {"date": "2026-06-25", "open": 287.15, "high": 288.55, "low": 273.51, "close": 274.91, "volume": 107013700}, {"date": "2026-06-26", "open": 274.76, "high": 285.7, "low": 273.97, "close": 283.54, "volume": 261775500}, {"date": "2026-06-29", "open": 286.48, "high": 288.12, "low": 279.61, "close": 281.5, "volume": 66427000}, {"date": "2026-06-30", "open": 280.93, "high": 289.69, "low": 280.46, "close": 289.11, "volume": 65100200}, {"date": "2026-07-01", "open": 293.19, "high": 296.33, "low": 288.95, "close": 294.13, "volume": 50164200}, {"date": "2026-07-02", "open": 293.87, "high": 309.15, "low": 293.43, "close": 308.36, "volume": 75352800}, {"date": "2026-07-06", "open": 307.1, "high": 313.93, "low": 306.74, "close": 312.39, "volume": 53590000}, {"date": "2026-07-07", "open": 315.02, "high": 315.21, "low": 309.88, "close": 310.39, "volume": 42490000}, {"date": "2026-07-08", "open": 311.64, "high": 314.55, "low": 306.79, "close": 313.12, "volume": 41323500}, {"date": "2026-07-09", "open": 310.24, "high": 316.26, "low": 307.89, "close": 315.95, "volume": 48124500}, {"date": "2026-07-10", "open": 314.45, "high": 316.64, "low": 311.9, "close": 315.05, "volume": 34132300}, {"date": "2026-07-13", "open": 316.75, "high": 323.17, "low": 315.51, "close": 317.04, "volume": 43257800}, {"date": "2026-07-14", "open": 313.49, "high": 315.92, "low": 311.64, "close": 314.59, "volume": 36336800}, {"date": "2026-07-15", "open": 317.35, "high": 328.45, "low": 317.05, "close": 327.22, "volume": 60957600}, {"date": "2026-07-16", "open": 327.73, "high": 334.39, "low": 326.51, "close": 332.97, "volume": 62970600}, {"date": "2026-07-17", "open": 331.69, "high": 334.7, "low": 328.72, "close": 333.45, "volume": 63407100}, {"date": "2026-07-20", "open": 333.22, "high": 333.42, "low": 323.4, "close": 326.31, "volume": 53468000}, {"date": "2026-07-21", "open": 322.85, "high": 329.32, "low": 321.94, "close": 327.46, "volume": 41338900}, {"date": "2026-07-22", "open": 327.59, "high": 328.72, "low": 323.06, "close": 325.61, "volume": 38755900}, {"date": "2026-07-23", "open": 321.45, "high": 323.02, "low": 319.07, "close": 321.38, "volume": 40840800}, {"date": "2026-07-24", "open": 321.51, "high": 334.08, "low": 321.34, "close": 332.73, "volume": 47489400}, {"date": "2026-07-27", "open": 334.25, "high": 339.28, "low": 333.73, "close": 336.62, "volume": 49604300}, {"date": "2026-07-28", "open": 339.74, "high": 342.59, "low": 335.31, "close": 339.79, "volume": 51859000}, {"date": "2026-07-29", "open": 339.44, "high": 344.27, "low": 337.06, "close": 337.9, "volume": 56090800}, {"date": "2026-07-30", "open": 332.81, "high": 334.46, "low": 329.31, "close": 333.14, "volume": 74817800}, {"date": "2026-07-31", "open": 304.55, "high": 310.42, "low": 299.74, "close": 308.64, "volume": 132489100}, {"date": "2026-08-03", "open": 309.31, "high": 311.53, "low": 302.3, "close": 303.16, "volume": 75052000}, {"date": "2026-08-04", "open": 302.47, "high": 310.15, "low": 301.06, "close": 309.11, "volume": 68001000}, {"date": "2026-08-05", "open": 309.09, "high": 311.44, "low": 305.41, "close": 310.73, "volume": 49438800}, {"date": "2026-08-06", "open": 314.07, "high": 316.02, "low": 308.96, "close": 312.14, "volume": 46139900}, {"date": "2026-08-07", "open": 311.18, "high": 314.54, "low": 310.47, "close": 313.06, "volume": 34437200}, {"date": "2026-08-10", "open": 306.83, "high": 308.26, "low": 304.61, "close": 308.26, "volume": 44812500}, {"date": "2026-08-11", "open": 307.75, "high": 309.97, "low": 302.79, "close": 304.91, "volume": 37476700}, {"date": "2026-08-12", "open": 305.1, "high": 305.66, "low": 300.57, "close": 302.25, "volume": 41657800}, {"date": "2026-08-13", "open": 304.21, "high": 306.0, "low": 302.05, "close": 305.26, "volume": 40349300}, {"date": "2026-08-14", "open": 306.0, "high": 307.49, "low": 304.3, "close": 305.93, "volume": 28186700}], "fetched_at": "2026-08-15 14:49:00"}, {"symbol": "005930.KS", "query_name": "삼성전자", "display_title": "삼성전자 (SamsungElec)", "short_name": "SamsungElec", "long_name": "Samsung Electronics Co., Ltd.", "currency": "KRW", "exchange": "KSC", "current_price": 274500.0, "previous_close": 268000.0, "price_change": 6500.0, "pct_change": 2.425373134328358, "period": "3mo", "interval": "1d", "period_change": -21173.9375, "period_pct_change": -7.161245823365816, "period_high": 374087.44831391243, "period_low": 189200.0, "fundamentals": {"market_cap": 1802521672679424, "market_cap_fmt": "1802.52조 원", "pe_ratio": null, "forward_pe": 4.086378, "pbr": null, "eps": null, "forward_eps": null, "beta": 1.557, "dividend_yield": 0.54, "fifty_two_week_high": 374500.0, "fifty_two_week_low": 67500.0, "fifty_day_avg": 285570.0, "two_hundred_day_avg": 202052.75, "volume": 21669476, "avg_volume": 30853399, "day_high": 275500.0, "day_low": 266000.0, "open": 275000.0}, "analyst": {"target_mean": 471908.2, "target_high": 725000.0, "target_low": 210000.0, "recommendation": "strong_buy", "opinions_count": 37}, "profile": {"short_name": "SamsungElec", "long_name": "Samsung Electronics Co., Ltd.", "display_title": "삼성전자 (SamsungElec)", "sector": "Technology", "industry": "Consumer Electronics", "country": "South Korea", "website": "https://www.samsung.com", "summary": "Samsung Electronics Co., Ltd. engages in the consumer electronics, information technology and mobile communications, and device solutions businesses worldwide. The company operates through four divisions: Device eXperience (DX), Device Solutions (DS), SDC, and Harman. The company offers smartphones, tablets, audio sounds, watches, switches, and accessories; TVs, and sound devices; appliances, including refrigerators, washing machines and dryers, vacuum cleaners, cooking appliances, dishwashers, air conditioners, and air purifiers; monitors and memory storage products; displays, and smart and LED signages; and other accessories. It also engages in venture capital investments, cloud services, network devices installation, semiconductor equipment services, digital advertising platforms, marketing, consulting, connected services provider, logistics, financing, and software design activities. In addition, the company provides toll processing and sales of semiconductors and display panels; development and sale of network solutions; manufacture of semiconductors and food; the provision of repair services for electronic devices; and development and supply of semiconductor process defect and quality control software, as well as digital televisions, foundry, system large scale integration (LSI). Further, it provides connected car systems, audio and visual products, enterprise automation solutions, and connected services. Samsung Electronics Co., Ltd. was incorporated in 1969 and is based in Suwon-si, South Korea.", "employees": null}, "history": [{"date": "2026-05-14", "open": 281689.36, "high": 299170.08, "low": 281689.36, "close": 295673.94, "volume": 39314752}, {"date": "2026-05-15", "open": 290679.42, "high": 296173.36, "low": 265706.96, "close": 270202.0, "volume": 38075487}, {"date": "2026-05-18", "open": 269203.11, "high": 288182.18, "low": 261711.37, "close": 280690.44, "volume": 33555214}, {"date": "2026-05-19", "open": 273698.15, "high": 281189.89, "low": 265706.97, "close": 275196.5, "volume": 30767569}, {"date": "2026-05-20", "open": 277693.77, "high": 282188.81, "low": 263209.74, "close": 275695.97, "volume": 35662077}, {"date": "2026-05-21", "open": 290679.43, "high": 299170.06, "low": 286683.83, "close": 299170.06, "volume": 36168689}, {"date": "2026-05-22", "open": 299669.52, "high": 300168.97, "low": 291678.33, "close": 292177.78, "volume": 18395274}, {"date": "2026-05-26", "open": 297671.73, "high": 301667.32, "low": 297172.28, "close": 298670.62, "volume": 23441371}, {"date": "2026-05-27", "open": 321145.84, "high": 322644.19, "low": 305662.91, "close": 306661.81, "volume": 33916688}, {"date": "2026-05-28", "open": 304664.0, "high": 306162.35, "low": 287183.28, "close": 299170.06, "volume": 30195334}, {"date": "2026-05-29", "open": 309159.04, "high": 318648.58, "low": 305163.45, "close": 316650.78, "volume": 37241537}, {"date": "2026-06-01", "open": 319148.03, "high": 354109.47, "low": 319148.03, "close": 348615.53, "volume": 45052488}, {"date": "2026-06-02", "open": 360102.88, "high": 369592.41, "low": 341623.25, "close": 360102.88, "volume": 44720282}, {"date": "2026-06-04", "open": 348615.54, "high": 365596.81, "low": 347616.64, "close": 351112.78, "volume": 34771037}, {"date": "2026-06-05", "open": 333132.61, "high": 342622.14, "low": 324641.97, "close": 328637.56, "volume": 33725012}, {"date": "2026-06-08", "open": 292677.22, "high": 315152.44, "low": 292177.77, "close": 295174.47, "volume": 38929682}, {"date": "2026-06-09", "open": 309658.5, "high": 323643.08, "low": 299669.52, "close": 321645.28, "volume": 30124249}, {"date": "2026-06-10", "open": 310657.39, "high": 314153.53, "low": 294924.74, "close": 302166.75, "volume": 1191}, {"date": "2026-06-11", "open": 290179.99, "high": 306162.36, "low": 287183.29, "close": 298670.62, "volume": 31420307}, {"date": "2026-06-12", "open": 325640.86, "high": 338626.54, "low": 319647.47, "close": 322144.72, "volume": 31006148}, {"date": "2026-06-15", "open": 342122.69, "high": 344120.49, "low": 333632.05, "close": 336628.75, "volume": 21500067}, {"date": "2026-06-16", "open": 342622.16, "high": 345119.4, "low": 332133.72, "close": 342622.16, "volume": 17548685}, {"date": "2026-06-17", "open": 331634.26, "high": 347616.63, "low": 331134.81, "close": 346118.28, "volume": 18134051}, {"date": "2026-06-18", "open": 344619.93, "high": 362600.11, "low": 344120.49, "close": 362100.66, "volume": 32764450}, {"date": "2026-06-19", "open": 372089.65, "high": 374087.45, "low": 345868.57, "close": 353610.03, "volume": 43284898}, {"date": "2026-06-22", "open": 342622.16, "high": 362600.13, "low": 341623.26, "close": 353110.59, "volume": 24330451}, {"date": "2026-06-23", "open": 347117.19, "high": 352611.13, "low": 309658.5, "close": 309658.5, "volume": 41266630}, {"date": "2026-06-24", "open": 313654.1, "high": 340624.36, "low": 313654.1, "close": 340124.91, "volume": 47809959}, {"date": "2026-06-25", "open": 359103.96, "high": 362100.66, "low": 351612.22, "close": 358105.06, "volume": 36157158}, {"date": "2026-06-26", "open": 353610.03, "high": 356107.27, "low": 321145.83, "close": 339126.0, "volume": 39735951}, {"date": "2026-06-29", "open": 331000.0, "high": 335500.0, "low": 316000.0, "close": 323000.0, "volume": 35436521}, {"date": "2026-06-30", "open": 323500.0, "high": 343000.0, "low": 321000.0, "close": 334000.0, "volume": 29237216}, {"date": "2026-07-01", "open": 334500.0, "high": 339000.0, "low": 311500.0, "close": 314500.0, "volume": 24968382}, {"date": "2026-07-02", "open": 290000.0, "high": 304000.0, "low": 281500.0, "close": 286000.0, "volume": 38905074}, {"date": "2026-07-03", "open": 288500.0, "high": 313000.0, "low": 283500.0, "close": 309500.0, "volume": 31520538}, {"date": "2026-07-06", "open": 320000.0, "high": 325000.0, "low": 303000.0, "close": 318000.0, "volume": 23872879}, {"date": "2026-07-07", "open": 307000.0, "high": 310000.0, "low": 286000.0, "close": 296000.0, "volume": 32421032}, {"date": "2026-07-08", "open": 285500.0, "high": 300000.0, "low": 273500.0, "close": 277500.0, "volume": 33525758}, {"date": "2026-07-09", "open": 288500.0, "high": 291500.0, "low": 267500.0, "close": 278000.0, "volume": 29703616}, {"date": "2026-07-10", "open": 291000.0, "high": 298000.0, "low": 282000.0, "close": 285000.0, "volume": 20088811}, {"date": "2026-07-13", "open": 285000.0, "high": 292500.0, "low": 253000.0, "close": 254500.0, "volume": 31882652}, {"date": "2026-07-14", "open": 255000.0, "high": 270000.0, "low": 247000.0, "close": 263000.0, "volume": 40086496}, {"date": "2026-07-15", "open": 283500.0, "high": 284500.0, "low": 273000.0, "close": 279500.0, "volume": 24873414}, {"date": "2026-07-16", "open": 264500.0, "high": 265500.0, "low": 252500.0, "close": 255000.0, "volume": 27001478}, {"date": "2026-07-20", "open": 241000.0, "high": 257500.0, "low": 240000.0, "close": 244000.0, "volume": 26804038}, {"date": "2026-07-21", "open": 247000.0, "high": 263500.0, "low": 243000.0, "close": 259000.0, "volume": 20386896}, {"date": "2026-07-22", "open": 276000.0, "high": 276000.0, "low": 260000.0, "close": 260500.0, "volume": 22292003}, {"date": "2026-07-23", "open": 269000.0, "high": 273000.0, "low": 263000.0, "close": 270000.0, "volume": 16011816}, {"date": "2026-07-24", "open": 266000.0, "high": 266500.0, "low": 247000.0, "close": 249500.0, "volume": 26175580}, {"date": "2026-07-27", "open": 257000.0, "high": 258500.0, "low": 246000.0, "close": 254000.0, "volume": 23296044}, {"date": "2026-07-28", "open": 238500.0, "high": 240000.0, "low": 218500.0, "close": 220000.0, "volume": 41639623}, {"date": "2026-07-29", "open": 226500.0, "high": 234000.0, "low": 189200.0, "close": 208500.0, "volume": 65555523}, {"date": "2026-07-30", "open": 214000.0, "high": 226000.0, "low": 202000.0, "close": 207000.0, "volume": 46694193}, {"date": "2026-07-31", "open": 257000.0, "high": 267000.0, "low": 243000.0, "close": 262500.0, "volume": 58478873}, {"date": "2026-08-03", "open": 248000.0, "high": 249500.0, "low": 238000.0, "close": 239500.0, "volume": 27825493}, {"date": "2026-08-04", "open": 244500.0, "high": 244500.0, "low": 228000.0, "close": 240000.0, "volume": 29433821}, {"date": "2026-08-05", "open": 254000.0, "high": 254500.0, "low": 244000.0, "close": 246000.0, "volume": 22577128}, {"date": "2026-08-06", "open": 241500.0, "high": 246000.0, "low": 228000.0, "close": 230500.0, "volume": 26101823}, {"date": "2026-08-07", "open": 235000.0, "high": 239500.0, "low": 229000.0, "close": 231000.0, "volume": 20546010}, {"date": "2026-08-10", "open": 236000.0, "high": 238500.0, "low": 228500.0, "close": 230000.0, "volume": 16327805}, {"date": "2026-08-11", "open": 229500.0, "high": 243000.0, "low": 227500.0, "close": 239500.0, "volume": 23310969}, {"date": "2026-08-12", "open": 243500.0, "high": 260500.0, "low": 241000.0, "close": 255500.0, "volume": 27102479}, {"date": "2026-08-13", "open": 267500.0, "high": 271000.0, "low": 262500.0, "close": 268000.0, "volume": 35530867}, {"date": "2026-08-14", "open": 275000.0, "high": 275500.0, "low": 266000.0, "close": 274500.0, "volume": 21669476}], "fetched_at": "2026-08-15 14:49:01"}];
+    const primaryStock = stockData[0];
+    const history = primaryStock.history || [];
+
+    const labels = history.map(item => item.date);
+    const closePrices = history.map(item => item.close);
+    const volumes = history.map(item => item.volume);
+
+    // Calculate 20-day Simple Moving Average
+    function calculateSMA(data, window = 20) {
+      const sma = [];
+      for (let i = 0; i < data.length; i++) {
+        if (i < window - 1) {
+          sma.push(null);
+        } else {
+          let sum = 0;
+          for (let j = 0; j < window; j++) {
+            sum += data[i - j];
+          }
+          sma.push(Number((sum / window).toFixed(2)));
+        }
+      }
+      return sma;
+    }
+
+    const sma20 = calculateSMA(closePrices, 20);
+
+    // Color gradient for price chart
+    const ctxPrice = document.getElementById('stockPriceChart').getContext('2d');
+    const gradient = ctxPrice.createLinearGradient(0, 0, 0, 380);
+    const isBull = (primaryStock.period_pct_change || 0) >= 0;
+    
+    if (isBull) {
+      gradient.addColorStop(0, 'rgba(16, 185, 129, 0.35)');
+      gradient.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
+    } else {
+      gradient.addColorStop(0, 'rgba(239, 68, 68, 0.35)');
+      gradient.addColorStop(1, 'rgba(239, 68, 68, 0.0)');
+    }
+
+    const priceChart = new Chart(ctxPrice, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: `${primaryStock.display_title} 주가 (${primaryStock.currency})`,
+            data: closePrices,
+            borderColor: isBull ? '#10b981' : '#ef4444',
+            backgroundColor: gradient,
+            borderWidth: 2.5,
+            fill: true,
+            tension: 0.15,
+            pointRadius: labels.length > 50 ? 0 : 2,
+            pointHoverRadius: 6
+          },
+          {
+            label: '20일 이동평균 (SMA)',
+            data: sma20,
+            borderColor: '#3b82f6',
+            borderWidth: 1.5,
+            borderDash: [4, 4],
+            fill: false,
+            pointRadius: 0,
+            hidden: true
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        plugins: {
+          legend: {
+            labels: {
+              color: '#9ca3af',
+              font: { family: 'Inter', size: 12 }
+            }
+          },
+          tooltip: {
+            backgroundColor: '#1e293b',
+            titleColor: '#f8fafc',
+            bodyColor: '#cbd5e1',
+            borderColor: '#334155',
+            borderWidth: 1,
+            padding: 12
+          }
+        },
+        scales: {
+          x: {
+            grid: { color: 'rgba(255, 255, 255, 0.04)' },
+            ticks: { color: '#64748b', maxTicksLimit: 10, font: { family: 'JetBrains Mono', size: 11 } }
+          },
+          y: {
+            grid: { color: 'rgba(255, 255, 255, 0.04)' },
+            ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 11 } }
+          }
+        }
+      }
+    });
+
+    // Volume Chart
+    const ctxVol = document.getElementById('volumeChart').getContext('2d');
+    const volumeChart = new Chart(ctxVol, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: '거래량 (Volume)',
+          data: volumes,
+          backgroundColor: 'rgba(59, 130, 246, 0.45)',
+          hoverBackgroundColor: 'rgba(59, 130, 246, 0.8)',
+          borderRadius: 3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#1e293b',
+            titleColor: '#f8fafc',
+            bodyColor: '#cbd5e1',
+            padding: 8
+          }
+        },
+        scales: {
+          x: { display: false },
+          y: {
+            grid: { color: 'rgba(255, 255, 255, 0.04)' },
+            ticks: { color: '#64748b', maxTicksLimit: 3, font: { family: 'JetBrains Mono', size: 10 } }
+          }
+        }
+      }
+    });
+
+    // Toggle SMA
+    const btnSma = document.getElementById('btnSma');
+    btnSma.addEventListener('click', () => {
+      const smaDataset = priceChart.data.datasets[1];
+      smaDataset.hidden = !smaDataset.hidden;
+      btnSma.classList.toggle('active', !smaDataset.hidden);
+      priceChart.update();
+    });
+
+    // Multi-stock compare chart if multi stocks exist
+    if (stockData.length > 1 && document.getElementById('multiCompareChart')) {
+      const palette = ['#3b82f6', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4'];
+      const multiDatasets = stockData.map((item, idx) => {
+        const h = item.history || [];
+        const basePrice = h.length > 0 ? h[0].close : 1;
+        const normData = h.map(pt => Number((((pt.close - basePrice) / basePrice) * 100).toFixed(2)));
+        return {
+          label: `${item.display_title} (%)`,
+          data: normData,
+          borderColor: palette[idx % palette.length],
+          backgroundColor: 'transparent',
+          borderWidth: 2.2,
+          pointRadius: 0,
+          tension: 0.15
+        };
+      });
+
+      const ctxMulti = document.getElementById('multiCompareChart').getContext('2d');
+      new Chart(ctxMulti, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: multiDatasets
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#9ca3af', font: { family: 'Inter', size: 12 } } },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y > 0 ? '+' : ''}${ctx.parsed.y}%`
+              }
+            }
+          },
+          scales: {
+            x: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#64748b' } },
+            y: {
+              grid: { color: 'rgba(255, 255, 255, 0.04)' },
+              ticks: {
+                color: '#64748b',
+                callback: (val) => `${val > 0 ? '+' : ''}${val}%`
+              }
+            }
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

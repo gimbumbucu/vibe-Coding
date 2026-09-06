@@ -1,0 +1,40 @@
+/* 바이브 코딩(Vibe Coding): 새로운 물결 - 디자인 토큰 */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;700&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+  /* Colors */
+  --ink:        #0E1729;   /* 주 텍스트 (깊은 감청색) */
+  --navy:       #1A2B4A;   /* 헤더 및 포인트 배경 */
+  --paper:      #F4F1EC;   /* 눈이 편안한 미색 배경 (웜 톤) */
+  --paper-2:    #ECE7DE;   /* 카드 및 섹션 구분용 대조 배경 */
+  --line:       #D8D2C5;   /* 미세한 헤어라인 선 */
+  --muted:      #6B7A8F;   /* 보조 텍스트 */
+  --accent:     #FF6B35;   /* 생동감 있는 오렌지 (핵심 강조) */
+  --accent-ink: #C44A1A;   /* 미색 배경 위의 텍스트 강조용 */
+  --green:      #2D9B6F;   /* 긍정/발전 지표 */
+  --red:        #C0413C;   /* 한계/주의 지표 */
+  
+  /* Fonts */
+  --font-sans:  'Noto Sans KR', 'IBM Plex Sans', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: var(--paper);
+}
+
+.slide-container {
+  font-family: var(--font-sans);
+  color: var(--ink);
+}
+
+/* 마크다운 형태의 기호 방지 및 리스트 공통 스타일 */
+ul, li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}

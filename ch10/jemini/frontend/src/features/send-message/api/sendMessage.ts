@@ -1,0 +1,32 @@
+import { httpClient } from '@/shared/api/httpClient';
+import { readSSEStream } from '@/shared/api/sseClient';
+
+interface SendMessageParams {
+  prompt: string;
+  chatId: string;
+  model: string;
+  imageUrl: string | null;
+  onChunk: (text: string) => void;
+  onChatId?: (chatId: string) => void;
+  onSuggestedQuestions?: (questions: string[]) => void;
+}
+
+export async function sendMessageStream(params: SendMessageParams): Promise<void> {
+  const response = await httpClient.post('/api/generate', {
+    prompt: params.prompt,
+    chat_id: params.chatId,
+    model: params.model,
+    image_url: params.imageUrl,
+  });
+  if (!response.ok || !response.body) throw new Error('API request failed');
+  for await (const data of readSSEStream(response)) {
+    if (data.type === 'chat_id' && data.chat_id && params.onChatId) {
+      params.onChatId(data.chat_id);
+    }
+    if (data.type === 'chunk' && data.text) params.onChunk(data.text);
+    if (data.type === 'suggested_questions' && Array.isArray(data.questions) && params.onSuggestedQuestions) {
+      params.onSuggestedQuestions(data.questions);
+    }
+  }
+}
+
